@@ -1,9 +1,9 @@
-⏺ <!DOCTYPE html>                                                                                                                                                                                              
-  <html>                                                                                                                                                                                               
+  <!DOCTYPE html>                                                                                                                                                                                              
+  <html>          
   <head>                                                                                                                                                                                                       
     <meta charset="UTF-8">
-    <title>物理ギフトカード 進捗ダッシュボード</title>                                                                                                                                                         
-    <style>       
+    <title>物理ギフトカード 進捗ダッシュボード</title>
+    <style>
       * { box-sizing: border-box; margin: 0; padding: 0; }
       body { font-family: 'Hiragino Sans', 'メイリオ', sans-serif; background: #f5f7fa; color: #333; }
 
@@ -14,14 +14,14 @@
       }
       header h1 { font-size: 18px; }
 
-      .controls { padding: 16px 24px; display: flex; gap: 12px; align-items: center; }
+      .controls { padding: 16px 24px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
       .btn { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: bold; }
       .btn-primary { background: #3498db; color: white; }
       .btn-secondary { background: #ecf0f1; color: #333; }
       .btn-success { background: #27ae60; color: white; }
       .btn:hover { opacity: 0.85; }
 
-      .stats { display: flex; gap: 16px; padding: 0 24px 16px; }
+      .stats { display: flex; gap: 16px; padding: 0 24px 16px; flex-wrap: wrap; }
       .stat-card { background: white; border-radius: 8px; padding: 12px 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.1); text-align: center; }
       .stat-card .num { font-size: 28px; font-weight: bold; }
       .stat-card .label { font-size: 11px; color: #999; margin-top: 2px; }
@@ -50,6 +50,12 @@
       .badge-先方待ち { background: #f1c40f; color: #333; }
       .badge-完了 { background: #2ecc71; color: white; }
 
+      .memo-cell { cursor: pointer; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #666; }
+      .memo-cell:hover { color: #3498db; }
+      .memo-empty { color: #ccc; }
+      .diff-plus { color: #27ae60; font-weight: bold; }
+      .diff-minus { color: #e74c3c; font-weight: bold; }
+
       .company-done td { opacity: 0.45; }
       .company-done td:first-child { text-decoration: line-through; }
 
@@ -60,10 +66,15 @@
         background: rgba(0,0,0,0.4); z-index: 100; align-items: center; justify-content: center;
       }
       .modal-overlay.show { display: flex; }
-      .modal { background: white; padding: 24px; border-radius: 8px; min-width: 300px; }
+      .modal { background: white; padding: 24px; border-radius: 8px; min-width: 320px; max-height: 90vh; overflow-y: auto; }
       .modal h2 { margin-bottom: 12px; font-size: 16px; }
       .modal p { font-size: 12px; color: #999; margin-bottom: 12px; }
-      .modal input { width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; margin-bottom: 12px; }
+      .modal label { font-size: 12px; color: #666; display: block; margin-bottom: 4px; }
+      .modal input, .modal textarea {
+        width: 100%; padding: 8px 12px; border: 1px solid #ddd;
+        border-radius: 6px; font-size: 14px; margin-bottom: 12px;
+      }
+      .modal textarea { height: 80px; resize: vertical; font-family: inherit; }
       .modal-btns { display: flex; gap: 8px; justify-content: flex-end; }
     </style>
   </head>
@@ -77,6 +88,8 @@
   <div class="controls">
     <button class="btn btn-success" onclick="openAddModal()">＋ 事業者を追加</button>
     <button class="btn btn-secondary" id="toggleBtn" onclick="toggleCompleted()">完了済みを表示</button>
+    <a class="btn btn-success" href="https://docs.google.com/spreadsheets/d/1rJLqwog14dUinNtqkTt1sCngtFOwfDYOpXSKute92jg/edit?gid=800499023#gid=800499023" target="_blank" 
+  style="text-decoration:none;">見積書スプレッドシートを開く</a>
   </div>
 
   <div class="stats" id="statsArea"></div>
@@ -89,6 +102,7 @@
     </table>
   </div>
 
+  <!-- トークンモーダル -->
   <div class="modal-overlay" id="tokenModal">
     <div class="modal">
       <h2>GitHubトークンを入力</h2>
@@ -100,15 +114,39 @@
     </div>
   </div>
 
+  <!-- 事業者追加モーダル -->
   <div class="modal-overlay" id="addModal">
     <div class="modal">
       <h2>事業者を追加</h2>
-      <input type="text" id="newCompanyName" placeholder="事業者名を入力" />
-      <input type="number" id="newHakkouMaisuu" placeholder="発行枚数" />
-      <input type="number" id="newDesignSuu" placeholder="デザイン数" />
+      <label>事業者名</label>
+      <input type="text" id="newCompanyName" placeholder="例：株式会社〇〇" />
+      <label>発行枚数</label>
+      <input type="number" id="newHakkouMaisuu" placeholder="例：1000" />
+      <label>デザイン数</label>
+      <input type="number" id="newDesignSuu" placeholder="例：3" />
+      <label>納品日</label>
+      <input type="date" id="newNouhinbi" />
+      <label>提示見積もり金額（円）</label>
+      <input type="number" id="newMitsumoriKingaku" placeholder="例：500000" />
+      <label>印刷会社見積もり金額（円）</label>
+      <input type="number" id="newInsatsuMitsumori" placeholder="例：300000" />
+      <label>備考</label>
+      <textarea id="newMemo" placeholder="任意"></textarea>
       <div class="modal-btns">
         <button class="btn btn-secondary" onclick="closeAddModal()">キャンセル</button>
         <button class="btn btn-primary" onclick="addCompany()">追加</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 備考モーダル -->
+  <div class="modal-overlay" id="memoModal">
+    <div class="modal">
+      <h2 id="memoModalTitle">備考</h2>
+      <textarea id="memoInput" placeholder="備考を入力"></textarea>
+      <div class="modal-btns">
+        <button class="btn btn-secondary" onclick="closeMemoModal()">キャンセル</button>
+        <button class="btn btn-primary" onclick="saveMemo()">保存</button>
       </div>
     </div>
   </div>
@@ -120,6 +158,7 @@
     var allData = [];
     var showCompleted = false;
     var token = '';
+    var memoTargetName = '';
 
     function init() {
       token = localStorage.getItem('gh_token') || '';
@@ -144,9 +183,7 @@
       fetch('https://api.github.com/gists/' + GIST_ID, {
         headers: { 'Authorization': 'token ' + token }
       })
-      .then(function(r) {
-        return r.text();
-      })
+      .then(function(r) { return r.text(); })
       .then(function(text) {
         var data = JSON.parse(text);
         var content = data.files['data.json'].content;
@@ -206,7 +243,15 @@
     }
 
     function renderTable() {
-      var headHtml = '<tr><th>事業者名</th><th>発行枚数</th><th>デザイン数</th>';
+      var headHtml = '<tr>' +
+        '<th>事業者名</th>' +
+        '<th>発行枚数</th>' +
+        '<th>デザイン数</th>' +
+        '<th>納品日</th>' +
+        '<th>提示見積もり</th>' +
+        '<th>印刷会社見積もり</th>' +
+        '<th>差分</th>' +
+        '<th>備考</th>';
       TASKS.forEach(function(t) { headHtml += '<th>' + t + '</th>'; });
       headHtml += '</tr>';
       document.getElementById('tableHead').innerHTML = headHtml;
@@ -215,10 +260,26 @@
       var bodyHtml = '';
 
       filtered.forEach(function(c) {
+        var memo = c.memo || '';
+        var diff = '';
+        var diffClass = '';
+        if (c.mitsumoriKingaku !== undefined && c.insatsuMitsumori !== undefined) {
+          var d = c.mitsumoriKingaku - c.insatsuMitsumori;
+          diffClass = d >= 0 ? 'diff-plus' : 'diff-minus';
+          diff = (d >= 0 ? '+' : '') + d.toLocaleString() + '円';
+        }
+
         bodyHtml += '<tr class="' + (isAllDone(c) ? 'company-done' : '') + '">';
         bodyHtml += '<td>' + esc(c.name) + ' <button onclick="deleteCompany(\'' + escAttr(c.name) + '\')" style="float:right;background:none;border:none;color:#ccc;cursor:pointer;font-size:16px;"title="削除">\xD7</button></td>';
-        bodyHtml += '<td style="cursor:pointer" onclick="editNumber(\'' + escAttr(c.name) + '\',\'hakkouMaisuu\',this)">' + (c.hakkouMaisuu !== undefined ? c.hakkouMaisuu : '-') + '</td>';
+        bodyHtml += '<td style="cursor:pointer" onclick="editNumber(\'' + escAttr(c.name) + '\',\'hakkouMaisuu\',this)">' + (c.hakkouMaisuu !== undefined ? c.hakkouMaisuu.toLocaleString() : '-') + '</td>';
         bodyHtml += '<td style="cursor:pointer" onclick="editNumber(\'' + escAttr(c.name) + '\',\'designSuu\',this)">' + (c.designSuu !== undefined ? c.designSuu : '-') + '</td>';
+        bodyHtml += '<td style="cursor:pointer" onclick="editDate(\'' + escAttr(c.name) + '\',this)">' + (c.nouhinbi || '-') + '</td>';
+        bodyHtml += '<td style="cursor:pointer" onclick="editNumber(\'' + escAttr(c.name) + '\',\'mitsumoriKingaku\',this)">' + (c.mitsumoriKingaku !== undefined ? c.mitsumoriKingaku.toLocaleString() + '円'
+  : '-') + '</td>';
+        bodyHtml += '<td style="cursor:pointer" onclick="editNumber(\'' + escAttr(c.name) + '\',\'insatsuMitsumori\',this)">' + (c.insatsuMitsumori !== undefined ? c.insatsuMitsumori.toLocaleString() + '円'
+  : '-') + '</td>';
+        bodyHtml += '<td class="' + diffClass + '">' + (diff || '-') + '</td>';
+        bodyHtml += '<td class="memo-cell' + (memo ? '' : ' memo-empty') + '" onclick="openMemoModal(\'' + escAttr(c.name) + '\')">' + (memo ? esc(memo) : '＋メモ') + '</td>';
         TASKS.forEach(function(t) {
           var s = c.tasks[t] || '未着手';
           bodyHtml += '<td><span class="badge badge-' + s + '" onclick="cycleStatus(\'' + escAttr(c.name) + '\',\'' + escAttr(t) + '\',this)">' + s + '</span></td>';
@@ -227,7 +288,7 @@
       });
 
       if (!filtered.length) {
-        bodyHtml = '<tr><td colspan="' + (TASKS.length + 3) + '" style="text-align:center;padding:32px;color:#999">事業者がいません</td></tr>';
+        bodyHtml = '<tr><td colspan="' + (TASKS.length + 8) + '" style="text-align:center;padding:32px;color:#999">事業者がいません</td></tr>';
       }
       document.getElementById('tableBody').innerHTML = bodyHtml;
     }
@@ -254,14 +315,37 @@
     }
 
     function openAddModal() {
-      document.getElementById('newCompanyName').value = '';
-      document.getElementById('newHakkouMaisuu').value = '';
-      document.getElementById('newDesignSuu').value = '';
+      ['newCompanyName','newHakkouMaisuu','newDesignSuu','newNouhinbi','newMitsumoriKingaku','newInsatsuMitsumori','newMemo'].forEach(function(id) {
+        document.getElementById(id).value = '';
+      });
       document.getElementById('addModal').classList.add('show');
       setTimeout(function() { document.getElementById('newCompanyName').focus(); }, 100);
     }
 
     function closeAddModal() { document.getElementById('addModal').classList.remove('show'); }
+
+    function openMemoModal(name) {
+      memoTargetName = name;
+      var company = allData.find(function(c) { return c.name === name; });
+      document.getElementById('memoModalTitle').textContent = name + ' の備考';
+      document.getElementById('memoInput').value = company ? (company.memo || '') : '';
+      document.getElementById('memoModal').classList.add('show');
+      setTimeout(function() { document.getElementById('memoInput').focus(); }, 100);
+    }
+
+    function closeMemoModal() {
+      document.getElementById('memoModal').classList.remove('show');
+      memoTargetName = '';
+    }
+
+    function saveMemo() {
+      var company = allData.find(function(c) { return c.name === memoTargetName; });
+      if (company) company.memo = document.getElementById('memoInput').value.trim();
+      closeMemoModal();
+      render();
+      saveData().catch(function(e) { alert('保存失敗: ' + e.message); });
+      updateTime();
+    }
 
     function deleteCompany(name) {
       if (!confirm(name + ' を削除しますか？')) return;
@@ -271,11 +355,11 @@
     }
 
     function editNumber(name, field, cell) {
-      var current = cell.textContent.trim();
+      var current = cell.textContent.replace(/[^0-9\-]/g, '');
       var input = document.createElement('input');
       input.type = 'number';
-      input.value = current === '-' ? '' : current;
-      input.style.cssText = 'width:60px;font-size:12px;text-align:center;border:1px solid #3498db;border-radius:4px;';
+      input.value = current;
+      input.style.cssText = 'width:80px;font-size:12px;text-align:center;border:1px solid #3498db;border-radius:4px;';
       cell.textContent = '';
       cell.appendChild(input);
       input.focus();
@@ -289,14 +373,40 @@
             delete company[field];
           }
         }
-        cell.textContent = (company && company[field] !== undefined) ? company[field] : '-';
+        renderTable();
         saveData().catch(function(e) { alert('保存失敗: ' + e.message); });
       }
 
       input.addEventListener('blur', save);
       input.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' && !e.isComposing) save();
-        if (e.key === 'Escape') cell.textContent = current;
+        if (e.key === 'Enter' && !e.isComposing) { input.blur(); }
+        if (e.key === 'Escape') renderTable();
+      });
+    }
+
+    function editDate(name, cell) {
+      var company = allData.find(function(c) { return c.name === name; });
+      var current = company ? (company.nouhinbi || '') : '';
+      var input = document.createElement('input');
+      input.type = 'date';
+      input.value = current;
+      input.style.cssText = 'font-size:12px;border:1px solid #3498db;border-radius:4px;';
+      cell.textContent = '';
+      cell.appendChild(input);
+      input.focus();
+
+      function save() {
+        if (company) {
+          company.nouhinbi = input.value || '';
+        }
+        renderTable();
+        saveData().catch(function(e) { alert('保存失敗: ' + e.message); });
+      }
+
+      input.addEventListener('blur', save);
+      input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') { input.blur(); }
+        if (e.key === 'Escape') renderTable();
       });
     }
 
@@ -305,13 +415,22 @@
       if (!name) { alert('事業者名を入力してください'); return; }
       if (allData.some(function(c) { return c.name === name; })) { alert('すでに存在します'); return; }
 
-      var hakkouMaisuu = document.getElementById('newHakkouMaisuu').value;
-      var designSuu = document.getElementById('newDesignSuu').value;
-
       var newC = { name: name, tasks: {} };
-      if (hakkouMaisuu !== '') newC.hakkouMaisuu = Number(hakkouMaisuu);
-      if (designSuu !== '') newC.designSuu = Number(designSuu);
+      var hakkouMaisuu = document.getElementById('newHakkouMaisuu').value;
+      var designSuu    = document.getElementById('newDesignSuu').value;
+      var nouhinbi     = document.getElementById('newNouhinbi').value;
+      var mitsumori    = document.getElementById('newMitsumoriKingaku').value;
+      var insatsu      = document.getElementById('newInsatsuMitsumori').value;
+      var memo         = document.getElementById('newMemo').value.trim();
+
+      if (hakkouMaisuu !== '') newC.hakkouMaisuu      = Number(hakkouMaisuu);
+      if (designSuu !== '')    newC.designSuu          = Number(designSuu);
+      if (nouhinbi !== '')     newC.nouhinbi           = nouhinbi;
+      if (mitsumori !== '')    newC.mitsumoriKingaku   = Number(mitsumori);
+      if (insatsu !== '')      newC.insatsuMitsumori   = Number(insatsu);
+      if (memo !== '')         newC.memo               = memo;
       TASKS.forEach(function(t) { newC.tasks[t] = '未着手'; });
+
       allData.push(newC);
       render();
       closeAddModal();
