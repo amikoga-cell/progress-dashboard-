@@ -1,9 +1,9 @@
-  <!DOCTYPE html>                                                                                                                                                                                              
-  <html>                                                                                                                                                                                                       
+⏺ <!DOCTYPE html>                                                                                                                                                                                              
+  <html>                                                                                                                                                                                               
   <head>                                                                                                                                                                                                       
     <meta charset="UTF-8">
-    <title>物理ギフトカード 進捗ダッシュボード</title>
-    <style>
+    <title>物理ギフトカード 進捗ダッシュボード</title>                                                                                                                                                         
+    <style>       
       * { box-sizing: border-box; margin: 0; padding: 0; }
       body { font-family: 'Hiragino Sans', 'メイリオ', sans-serif; background: #f5f7fa; color: #333; }
 
@@ -104,6 +104,8 @@
     <div class="modal">
       <h2>事業者を追加</h2>
       <input type="text" id="newCompanyName" placeholder="事業者名を入力" />
+      <input type="number" id="newHakkouMaisuu" placeholder="発行枚数" />
+      <input type="number" id="newDesignSuu" placeholder="デザイン数" />
       <div class="modal-btns">
         <button class="btn btn-secondary" onclick="closeAddModal()">キャンセル</button>
         <button class="btn btn-primary" onclick="addCompany()">追加</button>
@@ -137,30 +139,28 @@
       loadData();
     }
 
-    function loadData() {                                                                                                                                                                                    
-        document.getElementById('loading').textContent = '読み込み中...';                                                                                                                                      
-        fetch('https://api.github.com/gists/' + GIST_ID, {                                                                                                                                                     
-          headers: { 'Authorization': 'token ' + token }
-        })
-        .then(function(r) {
-          console.log('HTTPステータス:', r.status);
-          return r.text();
-        })
-        .then(function(text) {
-          console.log('レスポンス:', text.substring(0, 300));
-          var data = JSON.parse(text);
-          var content = data.files['data.json'].content;
-          var parsed = JSON.parse(content);
-          allData = parsed.companies || [];
-          render();
-          document.getElementById('loading').style.display = 'none';
-          document.getElementById('dashTable').style.display = 'table';
-          updateTime();
-        })
-        .catch(function(e) {
-          document.getElementById('loading').textContent = 'エラー詳細: ' + e.message;
-        });
-      }
+    function loadData() {
+      document.getElementById('loading').textContent = '読み込み中...';
+      fetch('https://api.github.com/gists/' + GIST_ID, {
+        headers: { 'Authorization': 'token ' + token }
+      })
+      .then(function(r) {
+        return r.text();
+      })
+      .then(function(text) {
+        var data = JSON.parse(text);
+        var content = data.files['data.json'].content;
+        var parsed = JSON.parse(content);
+        allData = parsed.companies || [];
+        render();
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('dashTable').style.display = 'table';
+        updateTime();
+      })
+      .catch(function(e) {
+        document.getElementById('loading').textContent = 'エラー: ' + e.message;
+      });
+    }
 
     function saveData() {
       return fetch('https://api.github.com/gists/' + GIST_ID, {
@@ -206,7 +206,7 @@
     }
 
     function renderTable() {
-      var headHtml = '<tr><th>事業者名</th>';
+      var headHtml = '<tr><th>事業者名</th><th>発行枚数</th><th>デザイン数</th>';
       TASKS.forEach(function(t) { headHtml += '<th>' + t + '</th>'; });
       headHtml += '</tr>';
       document.getElementById('tableHead').innerHTML = headHtml;
@@ -216,7 +216,10 @@
 
       filtered.forEach(function(c) {
         bodyHtml += '<tr class="' + (isAllDone(c) ? 'company-done' : '') + '">';
-        bodyHtml += '<td>' + esc(c.name) + ' <button onclick="deleteCompany(\'' + escAttr(c.name) + '\')" style="float:right;background:none;border:none;color:#ccc;cursor:pointer;font-size:16px;"title="削除">\xD7</button></td>';          TASKS.forEach(function(t) {
+        bodyHtml += '<td>' + esc(c.name) + ' <button onclick="deleteCompany(\'' + escAttr(c.name) + '\')" style="float:right;background:none;border:none;color:#ccc;cursor:pointer;font-size:16px;"title="削除">\xD7</button></td>';
+        bodyHtml += '<td style="cursor:pointer" onclick="editNumber(\'' + escAttr(c.name) + '\',\'hakkouMaisuu\',this)">' + (c.hakkouMaisuu !== undefined ? c.hakkouMaisuu : '-') + '</td>';
+        bodyHtml += '<td style="cursor:pointer" onclick="editNumber(\'' + escAttr(c.name) + '\',\'designSuu\',this)">' + (c.designSuu !== undefined ? c.designSuu : '-') + '</td>';
+        TASKS.forEach(function(t) {
           var s = c.tasks[t] || '未着手';
           bodyHtml += '<td><span class="badge badge-' + s + '" onclick="cycleStatus(\'' + escAttr(c.name) + '\',\'' + escAttr(t) + '\',this)">' + s + '</span></td>';
         });
@@ -224,7 +227,7 @@
       });
 
       if (!filtered.length) {
-        bodyHtml = '<tr><td colspan="' + (TASKS.length + 1) + '" style="text-align:center;padding:32px;color:#999">事業者がいません</td></tr>';
+        bodyHtml = '<tr><td colspan="' + (TASKS.length + 3) + '" style="text-align:center;padding:32px;color:#999">事業者がいません</td></tr>';
       }
       document.getElementById('tableBody').innerHTML = bodyHtml;
     }
@@ -252,11 +255,14 @@
 
     function openAddModal() {
       document.getElementById('newCompanyName').value = '';
+      document.getElementById('newHakkouMaisuu').value = '';
+      document.getElementById('newDesignSuu').value = '';
       document.getElementById('addModal').classList.add('show');
       setTimeout(function() { document.getElementById('newCompanyName').focus(); }, 100);
     }
 
     function closeAddModal() { document.getElementById('addModal').classList.remove('show'); }
+
     function deleteCompany(name) {
       if (!confirm(name + ' を削除しますか？')) return;
       allData = allData.filter(function(c) { return c.name !== name; });
@@ -264,12 +270,47 @@
       saveData().catch(function(e) { alert('保存失敗: ' + e.message); });
     }
 
+    function editNumber(name, field, cell) {
+      var current = cell.textContent.trim();
+      var input = document.createElement('input');
+      input.type = 'number';
+      input.value = current === '-' ? '' : current;
+      input.style.cssText = 'width:60px;font-size:12px;text-align:center;border:1px solid #3498db;border-radius:4px;';
+      cell.textContent = '';
+      cell.appendChild(input);
+      input.focus();
+
+      function save() {
+        var company = allData.find(function(c) { return c.name === name; });
+        if (company) {
+          if (input.value !== '') {
+            company[field] = Number(input.value);
+          } else {
+            delete company[field];
+          }
+        }
+        cell.textContent = (company && company[field] !== undefined) ? company[field] : '-';
+        saveData().catch(function(e) { alert('保存失敗: ' + e.message); });
+      }
+
+      input.addEventListener('blur', save);
+      input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.isComposing) save();
+        if (e.key === 'Escape') cell.textContent = current;
+      });
+    }
+
     function addCompany() {
       var name = document.getElementById('newCompanyName').value.trim();
       if (!name) { alert('事業者名を入力してください'); return; }
       if (allData.some(function(c) { return c.name === name; })) { alert('すでに存在します'); return; }
 
+      var hakkouMaisuu = document.getElementById('newHakkouMaisuu').value;
+      var designSuu = document.getElementById('newDesignSuu').value;
+
       var newC = { name: name, tasks: {} };
+      if (hakkouMaisuu !== '') newC.hakkouMaisuu = Number(hakkouMaisuu);
+      if (designSuu !== '') newC.designSuu = Number(designSuu);
       TASKS.forEach(function(t) { newC.tasks[t] = '未着手'; });
       allData.push(newC);
       render();
@@ -285,7 +326,7 @@
     function escAttr(s) { return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
 
     document.getElementById('newCompanyName').addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') addCompany();
+      if (e.key === 'Enter' && !e.isComposing) addCompany();
       if (e.key === 'Escape') closeAddModal();
     });
 
