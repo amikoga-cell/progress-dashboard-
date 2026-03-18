@@ -216,8 +216,7 @@
 
       filtered.forEach(function(c) {
         bodyHtml += '<tr class="' + (isAllDone(c) ? 'company-done' : '') + '">';
-        bodyHtml += '<td>' + esc(c.name) + ' <button onclick="deleteCompany(\'' + escAttr(c.name) + '\')" style="float:right;background:none;border:none;color:#ccc;cursor:pointer;font-size:16px;"title="削除">×</button></td>';
-        TASKS.forEach(function(t) {
+        bodyHtml += '<td>' + esc(c.name) + ' <button onclick="deleteCompany(\'' + escAttr(c.name) + '\')" style="float:right;background:none;border:none;color:#ccc;cursor:pointer;font-size:16px;"title="削除">\xD7</button></td>';          TASKS.forEach(function(t) {
           var s = c.tasks[t] || '未着手';
           bodyHtml += '<td><span class="badge badge-' + s + '" onclick="cycleStatus(\'' + escAttr(c.name) + '\',\'' + escAttr(t) + '\',this)">' + s + '</span></td>';
         });
