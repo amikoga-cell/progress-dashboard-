@@ -147,6 +147,7 @@
         return r.json();
       })
       .then(function(data) {
+        console.log('Gist response:', JSON.stringify(data.files));
         var content = data.files['data.json'].content;
         var parsed = JSON.parse(content);
         allData = parsed.companies || [];
@@ -156,8 +157,7 @@
         updateTime();
       })
       .catch(function(e) {
-        document.getElementById('loading').textContent = 'エラー: ' + e.message;
-        localStorage.removeItem('gh_token');
+        document.getElementById('loading').textContent = 'エラー詳細: ' + e.message;
       });
     }
 
