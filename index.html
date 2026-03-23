@@ -466,9 +466,11 @@
         var total = prospects.length;
         var goui = prospects.filter(function(p) { return p.kakudo==='口頭合意'||p.kakudo==='契約締結'; }).length;
         var totalMitsumoriP = prospects.reduce(function(s,p){ return s+(p.mitsumori||0); },0);
+        var totalGMV = prospects.reduce(function(s,p){ return s+(p.mikomiGMV||0); },0);
         document.getElementById('prospectStatsArea').innerHTML =
           '<div class="stat-card"><div class="num num-total">'+total+'</div><div class="label">案件数</div></div>' +
           '<div class="stat-card"><div class="num num-合意">'+goui+'</div><div class="label">口頭合意以上</div></div>' +
+          '<div class="stat-card"><div class="num num-total" style="font-size:20px;">'+totalGMV.toLocaleString()+'円</div><div class="label">見込みGMV合計</div></div>' +
           '<div class="stat-card"><div class="num num-total" style="font-size:20px;">'+totalMitsumoriP.toLocaleString()+'円</div><div class="label">見積もり合計</div></div>';
       }
       function renderProspectTable() {
