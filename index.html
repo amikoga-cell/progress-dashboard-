@@ -381,7 +381,7 @@
             if (c.tasks[t] === '先方待ち') waiting++;
           });
         });
-        var totalMitsumori = allData.reduce(function(s,c){ return s+(c.mitsumoriKingaku||0); },0);
+        var totalMitsumori = allData.filter(function(c){ return showCompleted||!isAllDone(c); }).reduce(function(s,c){ return s+(c.mitsumoriKingaku||0); },0);
         document.getElementById('statsArea').innerHTML =
           '<div class="stat-card"><div class="num num-弊社ボール">'+ourBall+'</div><div class="label">弊社ボール</div></div>' +
           '<div class="stat-card"><div class="num num-先方待ち">'+waiting+'</div><div class="label">先方待ち</div></div>' +
