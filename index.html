@@ -315,6 +315,22 @@
     }
 
     function loadData() {
+      // キャッシュがあれば即表示
+      var cached = localStorage.getItem('dashboard_cache');
+      if (cached) {
+        try {
+          var parsedCache = JSON.parse(cached);
+          allData = parsedCache.companies || [];
+          prospects = parsedCache.prospects || [];
+          render();
+          document.getElementById('loading').style.display = 'none';
+          document.getElementById('dashTable').style.display = 'table';
+          document.getElementById('prospectLoading').style.display = 'none';
+          document.getElementById('prospectTable').style.display = 'table';
+          document.getElementById('lastUpdated').textContent = '更新確認中...';
+        } catch(e) {}
+      }
+      // バックグラウンドで最新データを取得
       fetch('https://api.github.com/gists/' + GIST_ID, {
         headers: { 'Authorization': 'token ' + token }
       })
@@ -325,6 +341,7 @@
         var parsed = JSON.parse(content);
         allData = parsed.companies || [];
         prospects = parsed.prospects || [];
+        localStorage.setItem('dashboard_cache', content);
         render();
         document.getElementById('loading').style.display = 'none';
         document.getElementById('dashTable').style.display = 'table';
@@ -333,8 +350,10 @@
         updateTime();
       })
       .catch(function(e) {
-        document.getElementById('loading').textContent = 'エラー: ' + e.message;
-        document.getElementById('prospectLoading').textContent = 'エラー: ' + e.message;
+        if (!cached) {
+          document.getElementById('loading').textContent = 'エラー: ' + e.message;
+          document.getElementById('prospectLoading').textContent = 'エラー: ' + e.message;
+        }
       });
     }
 
