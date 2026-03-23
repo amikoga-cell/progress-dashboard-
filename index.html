@@ -411,8 +411,7 @@
           : '<span class="item-empty">＋選択</span>';
 
         bodyHtml += '<tr class="' + (isAllDone(c) ? 'company-done' : '') + '">';
-        bodyHtml += '<td>' + esc(c.name) + ' <button onclick="deleteCompany(\'' + escAttr(c.name) + '\')"
-  style="float:right;background:none;border:none;color:#ccc;cursor:pointer;font-size:16px;">\xD7</button></td>';
+        bodyHtml += '<td>' + esc(c.name) + ' <button onclick="deleteCompany(\'' + escAttr(c.name) + '\')"style="float:right;background:none;border:none;color:#ccc;cursor:pointer;font-size:16px;">\xD7</button></td>';
         bodyHtml += '<td style="cursor:pointer" onclick="editNumber(\'' + escAttr(c.name) + '\',\'hakkouMaisuu\',this)">' + (c.hakkouMaisuu !== undefined ? c.hakkouMaisuu.toLocaleString() : '-') + '</td>';
         bodyHtml += '<td style="cursor:pointer" onclick="editNumber(\'' + escAttr(c.name) + '\',\'designSuu\',this)">' + (c.designSuu !== undefined ? c.designSuu : '-') + '</td>';
         bodyHtml += '<td class="item-cell" onclick="openHatchuuModal(\'' + escAttr(c.name) + '\')">' + hatchuuHtml + '</td>';
