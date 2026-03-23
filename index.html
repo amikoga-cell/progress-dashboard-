@@ -385,10 +385,12 @@
             if (c.tasks[t] === '先方待ち') waiting++;
           });
         });
+        var totalMitsumori = allData.reduce(function(s,c){ return s+(c.mitsumoriGokei||0); },0);
         document.getElementById('statsArea').innerHTML =
           '<div class="stat-card"><div class="num num-弊社ボール">'+ourBall+'</div><div class="label">弊社ボール</div></div>' +
           '<div class="stat-card"><div class="num num-先方待ち">'+waiting+'</div><div class="label">先方待ち</div></div>' +
-          '<div class="stat-card"><div class="num num-完了社">'+allData.filter(isAllDone).length+'</div><div class="label">完了事業者</div></div>';
+          '<div class="stat-card"><div class="num num-完了社">'+allData.filter(isAllDone).length+'</div><div class="label">完了事業者</div></div>' +
+          '<div class="stat-card"><div class="num num-total" style="font-size:20px;">'+totalMitsumori.toLocaleString()+'円</div><div class="label">見積もり合計</div></div>';
       }
       function renderTable() {
         var h = '<tr><th>事業者名</th><th>担当者</th><th>発行枚数</th><th>デザイン数</th><th>発注内容</th><th>納品日</th><th>提示見積もり</th><th>印刷会社見積もり</th><th>見積もり合計</th><th>見積書</th><th>差分</th><th>備考</th>';
@@ -469,9 +471,11 @@
       function renderProspectStats() {
         var total = prospects.length;
         var goui = prospects.filter(function(p) { return p.kakudo==='口頭合意'||p.kakudo==='契約締結'; }).length;
+        var totalMitsumoriP = prospects.reduce(function(s,p){ return s+(p.mitsumoriGokei||0); },0);
         document.getElementById('prospectStatsArea').innerHTML =
           '<div class="stat-card"><div class="num num-total">'+total+'</div><div class="label">案件数</div></div>' +
-          '<div class="stat-card"><div class="num num-合意">'+goui+'</div><div class="label">口頭合意以上</div></div>';
+          '<div class="stat-card"><div class="num num-合意">'+goui+'</div><div class="label">口頭合意以上</div></div>' +
+          '<div class="stat-card"><div class="num num-total" style="font-size:20px;">'+totalMitsumoriP.toLocaleString()+'円</div><div class="label">見積もり合計</div></div>';
       }
       function renderProspectTable() {
         document.getElementById('prospectHead').innerHTML =
