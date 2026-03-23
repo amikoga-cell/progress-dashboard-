@@ -197,8 +197,6 @@
       <input type="number" id="newMitsumoriKingaku" placeholder="例：500000" />
       <label>印刷会社見積もり金額（円）</label>
       <input type="number" id="newInsatsuMitsumori" placeholder="例：300000" />
-      <label>見積もり合計金額（円）</label>
-      <input type="number" id="newMitsumoriGokei" placeholder="例：550000" />
       <label>見積書URL</label>
       <input type="url" id="newMitsumoriURL" placeholder="https://..." />
       <label>備考</label>
@@ -232,8 +230,6 @@
       <input type="number" id="pMikomiGMV" placeholder="例：1000000" />
       <label>見積もり金額（円）</label>
       <input type="number" id="pMitsumori" placeholder="例：500000" />
-      <label>見積もり合計金額（円）</label>
-      <input type="number" id="pMitsumoriGokei" placeholder="例：550000" />
       <label>見積書URL</label>
       <input type="url" id="pMitsumoriURL" placeholder="https://..." />
       <label>ネクストアクション</label>
@@ -385,7 +381,7 @@
             if (c.tasks[t] === '先方待ち') waiting++;
           });
         });
-        var totalMitsumori = allData.reduce(function(s,c){ return s+(c.mitsumoriGokei||0); },0);
+        var totalMitsumori = allData.reduce(function(s,c){ return s+(c.mitsumoriKingaku||0); },0);
         document.getElementById('statsArea').innerHTML =
           '<div class="stat-card"><div class="num num-弊社ボール">'+ourBall+'</div><div class="label">弊社ボール</div></div>' +
           '<div class="stat-card"><div class="num num-先方待ち">'+waiting+'</div><div class="label">先方待ち</div></div>' +
@@ -393,7 +389,7 @@
           '<div class="stat-card"><div class="num num-total" style="font-size:20px;">'+totalMitsumori.toLocaleString()+'円</div><div class="label">見積もり合計</div></div>';
       }
       function renderTable() {
-        var h = '<tr><th>事業者名</th><th>担当者</th><th>発行枚数</th><th>デザイン数</th><th>発注内容</th><th>納品日</th><th>提示見積もり</th><th>印刷会社見積もり</th><th>見積もり合計</th><th>見積書</th><th>差分</th><th>備考</th>';
+        var h = '<tr><th>事業者名</th><th>担当者</th><th>発行枚数</th><th>デザイン数</th><th>発注内容</th><th>納品日</th><th>提示見積もり</th><th>印刷会社見積もり</th><th>見積書</th><th>差分</th><th>備考</th>';
         TASKS.forEach(function(t) { h += '<th>'+t+'</th>'; });
         document.getElementById('tableHead').innerHTML = h + '</tr>';
         var filtered = allData.filter(function(c) { return showCompleted || !isAllDone(c); });
@@ -416,7 +412,6 @@
           body += '<td style="cursor:pointer" onclick="editDate(\''+escAttr(c.name)+'\',this)">'+(c.nouhinbi||'-')+'</td>';
           body += '<td style="cursor:pointer" onclick="editNumber(\''+escAttr(c.name)+'\',\'mitsumoriKingaku\',this)">'+(c.mitsumoriKingaku!==undefined?c.mitsumoriKingaku.toLocaleString()+'円':'-')+'</td>';
           body += '<td style="cursor:pointer" onclick="editNumber(\''+escAttr(c.name)+'\',\'insatsuMitsumori\',this)">'+(c.insatsuMitsumori!==undefined?c.insatsuMitsumori.toLocaleString()+'円':'-')+'</td>';
-          body += '<td style="cursor:pointer" onclick="editNumber(\''+escAttr(c.name)+'\',\'mitsumoriGokei\',this)">'+(c.mitsumoriGokei!==undefined?c.mitsumoriGokei.toLocaleString()+'円':'-')+'</td>';
           body += '<td class="url-cell" onclick="openUrlModal(\'company\',\''+escAttr(c.name)+'\')">' + urlHtml + '</td>';
           body += '<td class="'+diffClass+'">'+(diff||'-')+'</td>';
           body += '<td class="memo-cell'+(memo?'':' memo-empty')+'" onclick="openMemoModal(\''+escAttr(c.name)+'\')">'+(memo?esc(memo):'＋メモ')+'</td>';
@@ -428,7 +423,7 @@
           });
           body += '</tr>';
         });
-        if (!filtered.length) body = '<tr><td colspan="'+(TASKS.length+12)+'" style="text-align:center;padding:32px;color:#999">事業者がいません</td></tr>';
+        if (!filtered.length) body = '<tr><td colspan="'+(TASKS.length+11)+'" style="text-align:center;padding:32px;color:#999">事業者がいません</td></tr>';
         document.getElementById('tableBody').innerHTML = body;
       }
       function renderCards() {
@@ -449,7 +444,6 @@
            ['デザイン数',c.designSuu!==undefined?c.designSuu:'-'],['発注内容',hatchuu.length?hatchuu.join('・'):'-'],
            ['納品日',c.nouhinbi||'-'],['提示見積もり',c.mitsumoriKingaku!==undefined?c.mitsumoriKingaku.toLocaleString()+'円':'-'],
            ['印刷会社見積もり',c.insatsuMitsumori!==undefined?c.insatsuMitsumori.toLocaleString()+'円':'-'],
-           ['見積もり合計',c.mitsumoriGokei!==undefined?c.mitsumoriGokei.toLocaleString()+'円':'-'],
            ['差分',diff||'-'],['備考',c.memo||'-']
           ].forEach(function(row) {
             html += '<div class="card-row"><span class="card-label">'+row[0]+'</span><span class="card-value'+(row[0]==='差分'?' '+diffClass:'')+'">'+esc(String(row[1]))+'</span></div>';
@@ -471,7 +465,7 @@
       function renderProspectStats() {
         var total = prospects.length;
         var goui = prospects.filter(function(p) { return p.kakudo==='口頭合意'||p.kakudo==='契約締結'; }).length;
-        var totalMitsumoriP = prospects.reduce(function(s,p){ return s+(p.mitsumoriGokei||0); },0);
+        var totalMitsumoriP = prospects.reduce(function(s,p){ return s+(p.mitsumori||0); },0);
         document.getElementById('prospectStatsArea').innerHTML =
           '<div class="stat-card"><div class="num num-total">'+total+'</div><div class="label">案件数</div></div>' +
           '<div class="stat-card"><div class="num num-合意">'+goui+'</div><div class="label">口頭合意以上</div></div>' +
@@ -479,7 +473,7 @@
       }
       function renderProspectTable() {
         document.getElementById('prospectHead').innerHTML =
-          '<tr><th>会社名</th><th>アポ日</th><th>担当者</th><th>確度</th><th>見込みGMV</th><th>見積もり</th><th>見積もり合計</th><th>見積書</th><th>ネクストアクション</th><th>備考</th><th>操作</th></tr>';
+          '<tr><th>会社名</th><th>アポ日</th><th>担当者</th><th>確度</th><th>見込みGMV</th><th>見積もり</th><th>見積書</th><th>ネクストアクション</th><th>備考</th><th>操作</th></tr>';
         var body = '';
         prospects.forEach(function(p) {
           var k = p.kakudo || 'アプローチ中';
@@ -493,7 +487,6 @@
           body += '</select></td>';
           body += '<td style="cursor:pointer" onclick="editProspectNumber(\''+escAttr(p.name)+'\',\'mikomiGMV\',this)">'+(p.mikomiGMV!==undefined?p.mikomiGMV.toLocaleString()+'円':'-')+'</td>';
           body += '<td style="cursor:pointer" onclick="editProspectNumber(\''+escAttr(p.name)+'\',\'mitsumori\',this)">'+(p.mitsumori!==undefined?p.mitsumori.toLocaleString()+'円':'-')+'</td>';
-          body += '<td style="cursor:pointer" onclick="editProspectNumber(\''+escAttr(p.name)+'\',\'mitsumoriGokei\',this)">'+(p.mitsumoriGokei!==undefined?p.mitsumoriGokei.toLocaleString()+'円':'-')+'</td>';
           body += '<td class="url-cell" onclick="openUrlModal(\'prospect\',\''+escAttr(p.name)+'\')">' + urlHtml + '</td>';
           body += '<td style="cursor:pointer" onclick="editProspectText(\''+escAttr(p.name)+'\',\'nextAction\',this)">'+(p.nextAction?esc(p.nextAction):'<span class="item-empty">＋アクション</span>')+'</td>';
           body += '<td class="memo-cell'+(p.jokyo?'':' memo-empty')+'" onclick="openJokyoModal(\''+escAttr(p.name)+'\')">'+(p.jokyo?esc(p.jokyo):'＋備考')+'</td>';
@@ -501,7 +494,7 @@
           body += '<button onclick="deleteProspect(\''+escAttr(p.name)+'\')" style="background:none;border:none;color:#ccc;cursor:pointer;font-size:16px;">\xD7</button></td>';
           body += '</tr>';
         });
-        if (!prospects.length) body = '<tr><td colspan="11" style="text-align:center;padding:32px;color:#999">案件がありません</td></tr>';
+        if (!prospects.length) body = '<tr><td colspan="10" style="text-align:center;padding:32px;color:#999">案件がありません</td></tr>';
         document.getElementById('prospectBody').innerHTML = body;
       }
       function renderProspectCards() {
@@ -518,7 +511,6 @@
           [['アポ日',p.appoDate||'-'],['担当者',p.tantousha||'-'],
            ['見込みGMV',p.mikomiGMV!==undefined?p.mikomiGMV.toLocaleString()+'円':'-'],
            ['見積もり',p.mitsumori!==undefined?p.mitsumori.toLocaleString()+'円':'-'],
-           ['見積もり合計',p.mitsumoriGokei!==undefined?p.mitsumoriGokei.toLocaleString()+'円':'-'],
            ['ネクストアクション',p.nextAction||'-'],['備考',p.jokyo||'-']
           ].forEach(function(row) {
             html += '<div class="card-row"><span class="card-label">'+row[0]+'</span><span class="card-value">'+esc(String(row[1]))+'</span></div>';
@@ -539,7 +531,7 @@
         updateTime();
       }
       function openAddProspectModal() {
-        ['pName','pAppoDate','pTantousha','pMikomiGMV','pMitsumori','pMitsumoriGokei','pMitsumoriURL','pNextAction','pJokyo'].forEach(function(id) { document.getElementById(id).value=''; });
+        ['pName','pAppoDate','pTantousha','pMikomiGMV','pMitsumori','pMitsumoriURL','pNextAction','pJokyo'].forEach(function(id) { document.getElementById(id).value=''; });
         document.getElementById('pKakudo').value = 'アプローチ中';
         document.getElementById('addProspectModal').classList.add('show');
         setTimeout(function() { document.getElementById('pName').focus(); }, 100);
@@ -551,11 +543,9 @@
         if (prospects.some(function(pr) { return pr.name===name; })) { alert('すでに存在します'); return; }
         var p = { name:name, appoDate:document.getElementById('pAppoDate').value||'', tantousha:document.getElementById('pTantousha').value.trim(), kakudo:document.getElementById('pKakudo').value,
   nextAction:document.getElementById('pNextAction').value.trim(), jokyo:document.getElementById('pJokyo').value.trim() };
-        var gmv=document.getElementById('pMikomiGMV').value, mit=document.getElementById('pMitsumori').value, gokei=document.getElementById('pMitsumoriGokei').value,
-  url=document.getElementById('pMitsumoriURL').value.trim();
+        var gmv=document.getElementById('pMikomiGMV').value, mit=document.getElementById('pMitsumori').value, url=document.getElementById('pMitsumoriURL').value.trim();
         if (gmv!=='') p.mikomiGMV=Number(gmv);
         if (mit!=='') p.mitsumori=Number(mit);
-        if (gokei!=='') p.mitsumoriGokei=Number(gokei);
         if (url!=='') p.mitsumoriURL=url;
         prospects.push(p);
         renderProspectStats(); renderProspectTable(); renderProspectCards();
@@ -577,7 +567,6 @@
         var newC = { name:name, tasks:{} };
         if (p.tantousha) newC.tantousha = p.tantousha;
         if (p.mitsumori!==undefined) newC.mitsumoriKingaku = p.mitsumori;
-        if (p.mitsumoriGokei!==undefined) newC.mitsumoriGokei = p.mitsumoriGokei;
         if (p.mitsumoriURL) newC.mitsumoriURL = p.mitsumoriURL;
         TASKS.forEach(function(t) { newC.tasks[t]='未着手'; });
         allData.push(newC);
@@ -680,8 +669,7 @@
         render();
       }
       function openAddModal() {
-        ['newCompanyName','newTantousha','newHakkouMaisuu','newDesignSuu','newNouhinbi','newMitsumoriKingaku','newInsatsuMitsumori','newMitsumoriGokei','newMitsumoriURL','newMemo'].forEach(function(id){docum
-  ent.getElementById(id).value='';});
+        ['newCompanyName','newTantousha','newHakkouMaisuu','newDesignSuu','newNouhinbi','newMitsumoriKingaku','newInsatsuMitsumori','newMitsumoriURL','newMemo'].forEach(function(id){document.getElementById(id).value='';});
         document.querySelectorAll('input[name="newHatchuu"]').forEach(function(cb){cb.checked=false;});
         document.getElementById('addModal').classList.add('show');
         setTimeout(function(){document.getElementById('newCompanyName').focus();},100);
@@ -755,7 +743,6 @@
         var nouhinbi=document.getElementById('newNouhinbi').value;
         var mitsumori=document.getElementById('newMitsumoriKingaku').value;
         var insatsu=document.getElementById('newInsatsuMitsumori').value;
-        var gokei=document.getElementById('newMitsumoriGokei').value;
         var url=document.getElementById('newMitsumoriURL').value.trim();
         var memo=document.getElementById('newMemo').value.trim();
         var hatchuu=[];
@@ -766,7 +753,6 @@
         if(nouhinbi!=='') newC.nouhinbi=nouhinbi;
         if(mitsumori!=='') newC.mitsumoriKingaku=Number(mitsumori);
         if(insatsu!=='') newC.insatsuMitsumori=Number(insatsu);
-        if(gokei!=='') newC.mitsumoriGokei=Number(gokei);
         if(url!=='') newC.mitsumoriURL=url;
         if(memo!=='') newC.memo=memo;
         if(hatchuu.length) newC.hatchuu=hatchuu;
