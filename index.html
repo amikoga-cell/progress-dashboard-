@@ -391,8 +391,7 @@
           '<div class="stat-card"><div class="num num-完了社">'+allData.filter(isAllDone).length+'</div><div class="label">完了事業者</div></div>';
       }
       function renderTable() {
-        var h = '<tr><th>事業者名</th><th>担当者</th><th>発行枚数</th><th>デザイン数</th><th>発注内容</th><th>納品日</th><th>提示見積もり</th><th>印刷会社見積もり</th><th>見積もり合計</th><th>見積書</th><th>
-  差分</th><th>備考</th>';
+        var h = '<tr><th>事業者名</th><th>担当者</th><th>発行枚数</th><th>デザイン数</th><th>発注内容</th><th>納品日</th><th>提示見積もり</th><th>印刷会社見積もり</th><th>見積もり合計</th><th>見積書</th><th>差分</th><th>備考</th>';
         TASKS.forEach(function(t) { h += '<th>'+t+'</th>'; });
         document.getElementById('tableHead').innerHTML = h + '</tr>';
         var filtered = allData.filter(function(c) { return showCompleted || !isAllDone(c); });
@@ -405,8 +404,7 @@
             diff = (d >= 0 ? '+' : '') + d.toLocaleString() + '円';
           }
           var hHtml = hatchuu.length ? hatchuu.map(function(h) { return '<span class="item-tag">'+esc(h)+'</span>'; }).join('') : '<span class="item-empty">＋選択</span>';
-          var urlHtml = c.mitsumoriURL ? '<a href="'+esc(c.mitsumoriURL)+'" target="_blank" onclick="event.stopPropagation()" style="color:#3498db;font-size:11px;text-decoration:none;">開く</a>' : '<span
-  class="item-empty">＋URL</span>';
+          var urlHtml = c.mitsumoriURL ? '<a href="'+esc(c.mitsumoriURL)+'" target="_blank" onclick="event.stopPropagation()" style="color:#3498db;font-size:11px;text-decoration:none;">開く</a>' : '<span class="item-empty">＋URL</span>';
           body += '<tr class="'+(isAllDone(c)?'company-done':'')+'">';
           body += '<td>'+esc(c.name)+' <button onclick="deleteCompany(\''+escAttr(c.name)+'\')" style="float:right;background:none;border:none;color:#ccc;cursor:pointer;font-size:16px;">\xD7</button></td>';
           body += '<td style="cursor:pointer" onclick="editCompanyText(\''+escAttr(c.name)+'\',\'tantousha\',this)">'+(c.tantousha?esc(c.tantousha):'<span class="item-empty">-</span>')+'</td>';
@@ -443,8 +441,7 @@
           }
           html += '<div class="company-card'+(isAllDone(c)?' card-done':'')+'"><div class="card-header" onclick="toggleCard(this)">';
           html += '<span class="company-name">'+esc(c.name)+'</span>';
-          html += '<div style="display:flex;align-items:center;gap:8px;"><button onclick="event.stopPropagation();deleteCompany(\''+escAttr(c.name)+'\')" class="card-delete">\xD7</button><span
-  class="card-toggle">▼</span></div></div>';
+          html += '<div style="display:flex;align-items:center;gap:8px;"><button onclick="event.stopPropagation();deleteCompany(\''+escAttr(c.name)+'\')" class="card-delete">\xD7</button><span class="card-toggle">▼</span></div></div>';
           html += '<div class="card-body">';
           [['担当者',c.tantousha||'-'],['発行枚数',c.hakkouMaisuu!==undefined?c.hakkouMaisuu.toLocaleString():'-'],
            ['デザイン数',c.designSuu!==undefined?c.designSuu:'-'],['発注内容',hatchuu.length?hatchuu.join('・'):'-'],
@@ -455,8 +452,7 @@
           ].forEach(function(row) {
             html += '<div class="card-row"><span class="card-label">'+row[0]+'</span><span class="card-value'+(row[0]==='差分'?' '+diffClass:'')+'">'+esc(String(row[1]))+'</span></div>';
           });
-          if (c.mitsumoriURL) html += '<div class="card-row"><span class="card-label">見積書</span><span class="card-value"><a href="'+esc(c.mitsumoriURL)+'" target="_blank"
-  style="color:#3498db;text-decoration:none;">開く</a></span></div>';
+          if (c.mitsumoriURL) html += '<div class="card-row"><span class="card-label">見積書</span><span class="card-value"><a href="'+esc(c.mitsumoriURL)+'" target="_blank" style="color:#3498db;text-decoration:none;">開く</a></span></div>';
           html += '<div class="card-tasks">';
           TASKS.forEach(function(t) {
             var s = c.tasks[t] || '未着手';
@@ -483,8 +479,7 @@
         var body = '';
         prospects.forEach(function(p) {
           var k = p.kakudo || 'アプローチ中';
-          var urlHtml = p.mitsumoriURL ? '<a href="'+esc(p.mitsumoriURL)+'" target="_blank" onclick="event.stopPropagation()" style="color:#3498db;font-size:11px;text-decoration:none;">開く</a>' : '<span
-  class="item-empty">＋URL</span>';
+          var urlHtml = p.mitsumoriURL ? '<a href="'+esc(p.mitsumoriURL)+'" target="_blank" onclick="event.stopPropagation()" style="color:#3498db;font-size:11px;text-decoration:none;">開く</a>' : '<span class="item-empty">＋URL</span>';
           body += '<tr>';
           body += '<td>'+esc(p.name)+'</td>';
           body += '<td style="cursor:pointer" onclick="editProspectDate(\''+escAttr(p.name)+'\',this)">'+(p.appoDate||'-')+'</td>';
@@ -494,11 +489,9 @@
           body += '</select></td>';
           body += '<td style="cursor:pointer" onclick="editProspectNumber(\''+escAttr(p.name)+'\',\'mikomiGMV\',this)">'+(p.mikomiGMV!==undefined?p.mikomiGMV.toLocaleString()+'円':'-')+'</td>';
           body += '<td style="cursor:pointer" onclick="editProspectNumber(\''+escAttr(p.name)+'\',\'mitsumori\',this)">'+(p.mitsumori!==undefined?p.mitsumori.toLocaleString()+'円':'-')+'</td>';
-          body += '<td style="cursor:pointer"
-  onclick="editProspectNumber(\''+escAttr(p.name)+'\',\'mitsumoriGokei\',this)">'+(p.mitsumoriGokei!==undefined?p.mitsumoriGokei.toLocaleString()+'円':'-')+'</td>';
+          body += '<td style="cursor:pointer" onclick="editProspectNumber(\''+escAttr(p.name)+'\',\'mitsumoriGokei\',this)">'+(p.mitsumoriGokei!==undefined?p.mitsumoriGokei.toLocaleString()+'円':'-')+'</td>';
           body += '<td class="url-cell" onclick="openUrlModal(\'prospect\',\''+escAttr(p.name)+'\')">' + urlHtml + '</td>';
-          body += '<td style="cursor:pointer" onclick="editProspectText(\''+escAttr(p.name)+'\',\'nextAction\',this)">'+(p.nextAction?esc(p.nextAction):'<span
-  class="item-empty">＋アクション</span>')+'</td>';
+          body += '<td style="cursor:pointer" onclick="editProspectText(\''+escAttr(p.name)+'\',\'nextAction\',this)">'+(p.nextAction?esc(p.nextAction):'<span class="item-empty">＋アクション</span>')+'</td>';
           body += '<td class="memo-cell'+(p.jokyo?'':' memo-empty')+'" onclick="openJokyoModal(\''+escAttr(p.name)+'\')">'+(p.jokyo?esc(p.jokyo):'＋備考')+'</td>';
           body += '<td style="white-space:nowrap"><button class="btn-juchu" onclick="juchuProspect(\''+escAttr(p.name)+'\')">受注</button> ';
           body += '<button onclick="deleteProspect(\''+escAttr(p.name)+'\')" style="background:none;border:none;color:#ccc;cursor:pointer;font-size:16px;">\xD7</button></td>';
@@ -513,8 +506,7 @@
           var k = p.kakudo || 'アプローチ中';
           html += '<div class="company-card"><div class="card-header" onclick="toggleCard(this)">';
           html += '<span class="company-name">'+esc(p.name)+'</span>';
-          html += '<div style="display:flex;align-items:center;gap:8px;"><button onclick="event.stopPropagation();deleteProspect(\''+escAttr(p.name)+'\')" class="card-delete">\xD7</button><span
-  class="card-toggle">▼</span></div></div>';
+          html += '<div style="display:flex;align-items:center;gap:8px;"><button onclick="event.stopPropagation();deleteProspect(\''+escAttr(p.name)+'\')" class="card-delete">\xD7</button><span class="card-toggle">▼</span></div></div>';
           html += '<div class="card-body">';
           html += '<div class="card-row"><span class="card-label">確度</span><span class="card-value"><select class="kakudo-select kakudo-'+k+'" onchange="changeKakudo(\''+escAttr(p.name)+'\',this)">';
           KAKUDO_LIST.forEach(function(kk) { html += '<option value="'+kk+'"'+(k===kk?' selected':'')+'>'+kk+'</option>'; });
@@ -527,8 +519,7 @@
           ].forEach(function(row) {
             html += '<div class="card-row"><span class="card-label">'+row[0]+'</span><span class="card-value">'+esc(String(row[1]))+'</span></div>';
           });
-          if (p.mitsumoriURL) html += '<div class="card-row"><span class="card-label">見積書</span><span class="card-value"><a href="'+esc(p.mitsumoriURL)+'" target="_blank"
-  style="color:#3498db;text-decoration:none;">開く</a></span></div>';
+          if (p.mitsumoriURL) html += '<div class="card-row"><span class="card-label">見積書</span><span class="card-value"><a href="'+esc(p.mitsumoriURL)+'" target="_blank" style="color:#3498db;text-decoration:none;">開く</a></span></div>';
           html += '<div style="margin-top:12px;text-align:right;"><button class="btn-juchu" onclick="juchuProspect(\''+escAttr(p.name)+'\')">受注する</button></div>';
           html += '</div></div>';
         });
