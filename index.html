@@ -301,592 +301,491 @@
     </div>
   </div>
 
-  <script>
-    var GIST_ID = '2bf253d3446c8999d088826891a2073c';
-    var STATUSES = ['未着手', '弊社ボール', '先方待ち', '完了'];
-    var KAKUDO_LIST = ['アプローチ中', '商談中', '提案済み', '口頭合意', '契約締結'];
-    var TASKS = ['発行枚数確定', 'デザイン数確定', '見積もり送付', '発注書締結', '商品登録', 'URL発行・共有', 'デザイン共有', '印刷会社へ発注', '納品'];
-    var allData = [];
-    var prospects = [];
-    var showCompleted = false;
-    var token = '';
-    var memoTargetName = '';
-    var hatchuuTargetName = '';
-    var jokyoTargetName = '';
-    var urlTarget = { type: '', name: '' };
+      <script>                                                                                                                                                                                                   
+      var GIST_ID = '2bf253d3446c8999d088826891a2073c';
+      var STATUSES = ['未着手', '弊社ボール', '先方待ち', '完了'];                                                                                                                                             
+      var KAKUDO_LIST = ['アプローチ中', '商談中', '提案済み', '口頭合意', '契約締結'];                                                                                                                      
+      var TASKS = ['発行枚数確定', 'デザイン数確定', '見積もり送付', '発注書締結', '商品登録', 'URL発行・共有', 'デザイン共有', '印刷会社へ発注', '納品'];
+      var allData = [], prospects = [], showCompleted = false, token = '';
+      var memoTargetName = '', hatchuuTargetName = '', jokyoTargetName = '';
+      var urlTarget = { type: '', name: '' };
 
-    function init() {
-      token = localStorage.getItem('gh_token') || '';
-      if (!token) { document.getElementById('tokenModal').classList.add('show'); return; }
-      loadData();
-    }
-
-    function saveToken() {
-      var t = document.getElementById('tokenInput').value.trim();
-      if (!t) { alert('トークンを入力してください'); return; }
-      localStorage.setItem('gh_token', t);
-      token = t;
-      document.getElementById('tokenModal').classList.remove('show');
-      loadData();
-    }
-
-    function switchTab(tab) {
-      ['prospects', 'orders'].forEach(function(t) {
-        document.getElementById('tab-' + t).classList.toggle('active', t === tab);
-        document.getElementById('tabBtn-' + t).classList.toggle('active', t === tab);
-      });
-    }
-
-    function loadData() {
-      var cached = localStorage.getItem('dashboard_cache');
-      if (cached) {
-        try {
-          var parsedCache = JSON.parse(cached);
-          allData = parsedCache.companies || [];
-          prospects = parsedCache.prospects || [];
-          render();
-          document.getElementById('loading').style.display = 'none';
-          document.getElementById('dashTable').style.display = 'table';
-          document.getElementById('prospectLoading').style.display = 'none';
-          document.getElementById('prospectTable').style.display = 'table';
-          document.getElementById('lastUpdated').textContent = '更新確認中...';
-        } catch(e) {}
+      function init() {
+        token = localStorage.getItem('gh_token') || '';
+        if (!token) { document.getElementById('tokenModal').classList.add('show'); return; }
+        loadData();
       }
-      fetch('https://api.github.com/gists/' + GIST_ID, { headers: { 'Authorization': 'token ' + token } })
-      .then(function(r) { return r.text(); })
-      .then(function(text) {
-        var data = JSON.parse(text);
-        var content = data.files['data.json'].content;
-        var parsed = JSON.parse(content);
-        allData = parsed.companies || [];
-        prospects = parsed.prospects || [];
-        localStorage.setItem('dashboard_cache', content);
-        render();
-        document.getElementById('loading').style.display = 'none';
-        document.getElementById('dashTable').style.display = 'table';
-        document.getElementById('prosp
-
-⏺ <script>タグの中身だけを以下で置き換えてください（HTMLの<script>から</script>の間を全部差し替え）：
-
-    var GIST_ID = '2bf253d3446c8999d088826891a2073c';                                                                                                                                                          
-    var STATUSES = ['未着手', '弊社ボール', '先方待ち', '完了'];
-    var KAKUDO_LIST = ['アプローチ中', '商談中', '提案済み', '口頭合意', '契約締結'];                                                                                                                          
-    var TASKS = ['発行枚数確定', 'デザイン数確定', '見積もり送付', '発注書締結', '商品登録', 'URL発行・共有', 'デザイン共有', '印刷会社へ発注', '納品'];
-    var allData = [], prospects = [], showCompleted = false, token = '';
-    var memoTargetName = '', hatchuuTargetName = '', jokyoTargetName = '';
-    var urlTarget = { type: '', name: '' };
-
-    function init() {
-      token = localStorage.getItem('gh_token') || '';
-      if (!token) { document.getElementById('tokenModal').classList.add('show'); return; }
-      loadData();
-    }
-
-    function saveToken() {
-      var t = document.getElementById('tokenInput').value.trim();
-      if (!t) { alert('トークンを入力してください'); return; }
-      localStorage.setItem('gh_token', t); token = t;
-      document.getElementById('tokenModal').classList.remove('show');
-      loadData();
-    }
-
-    function switchTab(tab) {
-      ['prospects','orders'].forEach(function(t) {
-        document.getElementById('tab-'+t).classList.toggle('active', t===tab);
-        document.getElementById('tabBtn-'+t).classList.toggle('active', t===tab);
-      });
-    }
-
-    function loadData() {
-      var cached = localStorage.getItem('dashboard_cache');
-      if (cached) {
-        try {
-          var pc = JSON.parse(cached);
-          allData = pc.companies || []; prospects = pc.prospects || [];
-          render();
-          document.getElementById('loading').style.display = 'none';
-          document.getElementById('dashTable').style.display = 'table';
-          document.getElementById('prospectLoading').style.display = 'none';
-          document.getElementById('prospectTable').style.display = 'table';
-          document.getElementById('lastUpdated').textContent = '更新確認中...';
-        } catch(e) {}
+      function saveToken() {
+        var t = document.getElementById('tokenInput').value.trim();
+        if (!t) { alert('トークンを入力してください'); return; }
+        localStorage.setItem('gh_token', t); token = t;
+        document.getElementById('tokenModal').classList.remove('show');
+        loadData();
       }
-      fetch('https://api.github.com/gists/' + GIST_ID, { headers: { 'Authorization': 'token ' + token } })
-      .then(function(r) { return r.text(); })
-      .then(function(text) {
-        var data = JSON.parse(text);
-        var content = data.files['data.json'].content;
-        var parsed = JSON.parse(content);
-        allData = parsed.companies || []; prospects = parsed.prospects || [];
-        localStorage.setItem('dashboard_cache', content);
-        render();
-        document.getElementById('loading').style.display = 'none';
-        document.getElementById('dashTable').style.display = 'table';
-        document.getElementById('prospectLoading').style.display = 'none';
-        document.getElementById('prospectTable').style.display = 'table';
-        updateTime();
-      })
-      .catch(function(e) {
-        if (!cached) {
-          document.getElementById('loading').textContent = 'エラー: ' + e.message;
-          document.getElementById('prospectLoading').textContent = 'エラー: ' + e.message;
-        }
-      });
-    }
-
-    function saveData() {
-      return fetch('https://api.github.com/gists/' + GIST_ID, {
-        method: 'PATCH',
-        headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ files: { 'data.json': { content: JSON.stringify({ companies: allData, prospects: prospects }, null, 2) } } })
-      });
-    }
-
-    function isAllDone(c) { return TASKS.every(function(t) { return c.tasks[t] === '完了'; }); }
-
-    function render() {
-      renderStats(); renderTable(); renderCards();
-      renderProspectStats(); renderProspectTable(); renderProspectCards();
-    }
-
-    function renderStats() {
-      var active = allData.filter(function(c) { return !isAllDone(c); });
-      var ourBall = 0, waiting = 0;
-      active.forEach(function(c) {
-        TASKS.forEach(function(t) {
-          if (c.tasks[t] === '弊社ボール') ourBall++;
-          if (c.tasks[t] === '先方待ち') waiting++;
+      function switchTab(tab) {
+        ['prospects','orders'].forEach(function(t) {
+          document.getElementById('tab-'+t).classList.toggle('active', t===tab);
+          document.getElementById('tabBtn-'+t).classList.toggle('active', t===tab);
         });
-      });
-      document.getElementById('statsArea').innerHTML =
-        '<div class="stat-card"><div class="num num-弊社ボール">'+ourBall+'</div><div class="label">弊社ボール</div></div>' +
-        '<div class="stat-card"><div class="num num-先方待ち">'+waiting+'</div><div class="label">先方待ち</div></div>' +
-        '<div class="stat-card"><div class="num num-完了社">'+allData.filter(isAllDone).length+'</div><div class="label">完了事業者</div></div>';
-    }
-
-    function renderTable() {
-      var h = '<tr><th>事業者名</th><th>担当者</th><th>発行枚数</th><th>デザイン数</th><th>発注内容</th><th>納品日</th><th>提示見積もり</th><th>印刷会社見積もり</th><th>見積もり合計</th><th>見積書</th><th>差
-  分</th><th>備考</th>';
-      TASKS.forEach(function(t) { h += '<th>'+t+'</th>'; });
-      document.getElementById('tableHead').innerHTML = h + '</tr>';
-
-      var filtered = allData.filter(function(c) { return showCompleted || !isAllDone(c); });
-      var body = '';
-      filtered.forEach(function(c) {
-        var memo = c.memo || '', hatchuu = c.hatchuu || [], diff = '', diffClass = '';
-        if (c.mitsumoriKingaku !== undefined && c.insatsuMitsumori !== undefined) {
-          var d = c.mitsumoriKingaku - c.insatsuMitsumori;
-          diffClass = d >= 0 ? 'diff-plus' : 'diff-minus';
-          diff = (d >= 0 ? '+' : '') + d.toLocaleString() + '円';
+      }
+      function loadData() {
+        var cached = localStorage.getItem('dashboard_cache');
+        if (cached) {
+          try {
+            var pc = JSON.parse(cached);
+            allData = pc.companies || []; prospects = pc.prospects || [];
+            render();
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('dashTable').style.display = 'table';
+            document.getElementById('prospectLoading').style.display = 'none';
+            document.getElementById('prospectTable').style.display = 'table';
+            document.getElementById('lastUpdated').textContent = '更新確認中...';
+          } catch(e) {}
         }
-        var hHtml = hatchuu.length ? hatchuu.map(function(h) { return '<span class="item-tag">'+esc(h)+'</span>'; }).join('') : '<span class="item-empty">＋選択</span>';
-        var urlHtml = c.mitsumoriURL ? '<a href="'+esc(c.mitsumoriURL)+'" target="_blank" onclick="event.stopPropagation()" style="color:#3498db;font-size:11px;text-decoration:none;">開く</a>' : '<span
+        fetch('https://api.github.com/gists/' + GIST_ID, { headers: { 'Authorization': 'token ' + token } })
+        .then(function(r) { return r.text(); })
+        .then(function(text) {
+          var data = JSON.parse(text);
+          var content = data.files['data.json'].content;
+          var parsed = JSON.parse(content);
+          allData = parsed.companies || []; prospects = parsed.prospects || [];
+          localStorage.setItem('dashboard_cache', content);
+          render();
+          document.getElementById('loading').style.display = 'none';
+          document.getElementById('dashTable').style.display = 'table';
+          document.getElementById('prospectLoading').style.display = 'none';
+          document.getElementById('prospectTable').style.display = 'table';
+          updateTime();
+        })
+        .catch(function(e) {
+          if (!cached) {
+            document.getElementById('loading').textContent = 'エラー: ' + e.message;
+            document.getElementById('prospectLoading').textContent = 'エラー: ' + e.message;
+          }
+        });
+      }
+      function saveData() {
+        return fetch('https://api.github.com/gists/' + GIST_ID, {
+          method: 'PATCH',
+          headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ files: { 'data.json': { content: JSON.stringify({ companies: allData, prospects: prospects }, null, 2) } } })
+        });
+      }
+      function isAllDone(c) { return TASKS.every(function(t) { return c.tasks[t] === '完了'; }); }
+      function render() {
+        renderStats(); renderTable(); renderCards();
+        renderProspectStats(); renderProspectTable(); renderProspectCards();
+      }
+      function renderStats() {
+        var active = allData.filter(function(c) { return !isAllDone(c); });
+        var ourBall = 0, waiting = 0;
+        active.forEach(function(c) {
+          TASKS.forEach(function(t) {
+            if (c.tasks[t] === '弊社ボール') ourBall++;
+            if (c.tasks[t] === '先方待ち') waiting++;
+          });
+        });
+        document.getElementById('statsArea').innerHTML =
+          '<div class="stat-card"><div class="num num-弊社ボール">'+ourBall+'</div><div class="label">弊社ボール</div></div>' +
+          '<div class="stat-card"><div class="num num-先方待ち">'+waiting+'</div><div class="label">先方待ち</div></div>' +
+          '<div class="stat-card"><div class="num num-完了社">'+allData.filter(isAllDone).length+'</div><div class="label">完了事業者</div></div>';
+      }
+      function renderTable() {
+        var h = '<tr><th>事業者名</th><th>担当者</th><th>発行枚数</th><th>デザイン数</th><th>発注内容</th><th>納品日</th><th>提示見積もり</th><th>印刷会社見積もり</th><th>見積もり合計</th><th>見積書</th><th>
+  差分</th><th>備考</th>';
+        TASKS.forEach(function(t) { h += '<th>'+t+'</th>'; });
+        document.getElementById('tableHead').innerHTML = h + '</tr>';
+        var filtered = allData.filter(function(c) { return showCompleted || !isAllDone(c); });
+        var body = '';
+        filtered.forEach(function(c) {
+          var memo = c.memo || '', hatchuu = c.hatchuu || [], diff = '', diffClass = '';
+          if (c.mitsumoriKingaku !== undefined && c.insatsuMitsumori !== undefined) {
+            var d = c.mitsumoriKingaku - c.insatsuMitsumori;
+            diffClass = d >= 0 ? 'diff-plus' : 'diff-minus';
+            diff = (d >= 0 ? '+' : '') + d.toLocaleString() + '円';
+          }
+          var hHtml = hatchuu.length ? hatchuu.map(function(h) { return '<span class="item-tag">'+esc(h)+'</span>'; }).join('') : '<span class="item-empty">＋選択</span>';
+          var urlHtml = c.mitsumoriURL ? '<a href="'+esc(c.mitsumoriURL)+'" target="_blank" onclick="event.stopPropagation()" style="color:#3498db;font-size:11px;text-decoration:none;">開く</a>' : '<span
   class="item-empty">＋URL</span>';
-        body += '<tr class="'+(isAllDone(c)?'company-done':'')+'">';
-        body += '<td>'+esc(c.name)+' <button onclick="deleteCompany(\''+escAttr(c.name)+'\')" style="float:right;background:none;border:none;color:#ccc;cursor:pointer;font-size:16px;">\xD7</button></td>';
-        body += '<td style="cursor:pointer" onclick="editCompanyText(\''+escAttr(c.name)+'\',\'tantousha\',this)">'+(c.tantousha ? esc(c.tantousha) : '<span class="item-empty">-</span>')+'</td>';
-        body += '<td style="cursor:pointer" onclick="editNumber(\''+escAttr(c.name)+'\',\'hakkouMaisuu\',this)">'+(c.hakkouMaisuu!==undefined?c.hakkouMaisuu.toLocaleString():'-')+'</td>';
-        body += '<td style="cursor:pointer" onclick="editNumber(\''+escAttr(c.name)+'\',\'designSuu\',this)">'+(c.designSuu!==undefined?c.designSuu:'-')+'</td>';
-        body += '<td class="item-cell" onclick="openHatchuuModal(\''+escAttr(c.name)+'\')">' + hHtml + '</td>';
-        body += '<td style="cursor:pointer" onclick="editDate(\''+escAttr(c.name)+'\',this)">'+(c.nouhinbi||'-')+'</td>';
-        body += '<td style="cursor:pointer" onclick="editNumber(\''+escAttr(c.name)+'\',\'mitsumoriKingaku\',this)">'+(c.mitsumoriKingaku!==undefined?c.mitsumoriKingaku.toLocaleString()+'円':'-')+'</td>';
-        body += '<td style="cursor:pointer" onclick="editNumber(\''+escAttr(c.name)+'\',\'insatsuMitsumori\',this)">'+(c.insatsuMitsumori!==undefined?c.insatsuMitsumori.toLocaleString()+'円':'-')+'</td>';
-        body += '<td style="cursor:pointer" onclick="editNumber(\''+escAttr(c.name)+'\',\'mitsumoriGokei\',this)">'+(c.mitsumoriGokei!==undefined?c.mitsumoriGokei.toLocaleString()+'円':'-')+'</td>';
-        body += '<td class="url-cell" onclick="openUrlModal(\'company\',\''+escAttr(c.name)+'\')">' + urlHtml + '</td>';
-        body += '<td class="'+diffClass+'">'+(diff||'-')+'</td>';
-        body += '<td class="memo-cell'+(memo?'':' memo-empty')+'" onclick="openMemoModal(\''+escAttr(c.name)+'\')">'+(memo?esc(memo):'＋メモ')+'</td>';
-        TASKS.forEach(function(t) {
-          var s = c.tasks[t] || '未着手';
-          body += '<td><select class="status-select status-'+s+'" onchange="changeStatus(\''+escAttr(c.name)+'\',\''+escAttr(t)+'\',this)">';
-          STATUSES.forEach(function(st) { body += '<option value="'+st+'"'+(s===st?' selected':'')+'>'+st+'</option>'; });
+          body += '<tr class="'+(isAllDone(c)?'company-done':'')+'">';
+          body += '<td>'+esc(c.name)+' <button onclick="deleteCompany(\''+escAttr(c.name)+'\')" style="float:right;background:none;border:none;color:#ccc;cursor:pointer;font-size:16px;">\xD7</button></td>';
+          body += '<td style="cursor:pointer" onclick="editCompanyText(\''+escAttr(c.name)+'\',\'tantousha\',this)">'+(c.tantousha?esc(c.tantousha):'<span class="item-empty">-</span>')+'</td>';
+          body += '<td style="cursor:pointer" onclick="editNumber(\''+escAttr(c.name)+'\',\'hakkouMaisuu\',this)">'+(c.hakkouMaisuu!==undefined?c.hakkouMaisuu.toLocaleString():'-')+'</td>';
+          body += '<td style="cursor:pointer" onclick="editNumber(\''+escAttr(c.name)+'\',\'designSuu\',this)">'+(c.designSuu!==undefined?c.designSuu:'-')+'</td>';
+          body += '<td class="item-cell" onclick="openHatchuuModal(\''+escAttr(c.name)+'\')">' + hHtml + '</td>';
+          body += '<td style="cursor:pointer" onclick="editDate(\''+escAttr(c.name)+'\',this)">'+(c.nouhinbi||'-')+'</td>';
+          body += '<td style="cursor:pointer" onclick="editNumber(\''+escAttr(c.name)+'\',\'mitsumoriKingaku\',this)">'+(c.mitsumoriKingaku!==undefined?c.mitsumoriKingaku.toLocaleString()+'円':'-')+'</td>';
+          body += '<td style="cursor:pointer" onclick="editNumber(\''+escAttr(c.name)+'\',\'insatsuMitsumori\',this)">'+(c.insatsuMitsumori!==undefined?c.insatsuMitsumori.toLocaleString()+'円':'-')+'</td>';
+          body += '<td style="cursor:pointer" onclick="editNumber(\''+escAttr(c.name)+'\',\'mitsumoriGokei\',this)">'+(c.mitsumoriGokei!==undefined?c.mitsumoriGokei.toLocaleString()+'円':'-')+'</td>';
+          body += '<td class="url-cell" onclick="openUrlModal(\'company\',\''+escAttr(c.name)+'\')">' + urlHtml + '</td>';
+          body += '<td class="'+diffClass+'">'+(diff||'-')+'</td>';
+          body += '<td class="memo-cell'+(memo?'':' memo-empty')+'" onclick="openMemoModal(\''+escAttr(c.name)+'\')">'+(memo?esc(memo):'＋メモ')+'</td>';
+          TASKS.forEach(function(t) {
+            var s = c.tasks[t] || '未着手';
+            body += '<td><select class="status-select status-'+s+'" onchange="changeStatus(\''+escAttr(c.name)+'\',\''+escAttr(t)+'\',this)">';
+            STATUSES.forEach(function(st) { body += '<option value="'+st+'"'+(s===st?' selected':'')+'>'+st+'</option>'; });
+            body += '</select></td>';
+          });
+          body += '</tr>';
+        });
+        if (!filtered.length) body = '<tr><td colspan="'+(TASKS.length+12)+'" style="text-align:center;padding:32px;color:#999">事業者がいません</td></tr>';
+        document.getElementById('tableBody').innerHTML = body;
+      }
+      function renderCards() {
+        var filtered = allData.filter(function(c) { return showCompleted || !isAllDone(c); });
+        var html = '';
+        filtered.forEach(function(c) {
+          var hatchuu = c.hatchuu || [], diff = '', diffClass = '';
+          if (c.mitsumoriKingaku !== undefined && c.insatsuMitsumori !== undefined) {
+            var d = c.mitsumoriKingaku - c.insatsuMitsumori;
+            diffClass = d >= 0 ? 'diff-plus' : 'diff-minus';
+            diff = (d >= 0 ? '+' : '') + d.toLocaleString() + '円';
+          }
+          html += '<div class="company-card'+(isAllDone(c)?' card-done':'')+'"><div class="card-header" onclick="toggleCard(this)">';
+          html += '<span class="company-name">'+esc(c.name)+'</span>';
+          html += '<div style="display:flex;align-items:center;gap:8px;"><button onclick="event.stopPropagation();deleteCompany(\''+escAttr(c.name)+'\')" class="card-delete">\xD7</button><span
+  class="card-toggle">▼</span></div></div>';
+          html += '<div class="card-body">';
+          [['担当者',c.tantousha||'-'],['発行枚数',c.hakkouMaisuu!==undefined?c.hakkouMaisuu.toLocaleString():'-'],
+           ['デザイン数',c.designSuu!==undefined?c.designSuu:'-'],['発注内容',hatchuu.length?hatchuu.join('・'):'-'],
+           ['納品日',c.nouhinbi||'-'],['提示見積もり',c.mitsumoriKingaku!==undefined?c.mitsumoriKingaku.toLocaleString()+'円':'-'],
+           ['印刷会社見積もり',c.insatsuMitsumori!==undefined?c.insatsuMitsumori.toLocaleString()+'円':'-'],
+           ['見積もり合計',c.mitsumoriGokei!==undefined?c.mitsumoriGokei.toLocaleString()+'円':'-'],
+           ['差分',diff||'-'],['備考',c.memo||'-']
+          ].forEach(function(row) {
+            html += '<div class="card-row"><span class="card-label">'+row[0]+'</span><span class="card-value'+(row[0]==='差分'?' '+diffClass:'')+'">'+esc(String(row[1]))+'</span></div>';
+          });
+          if (c.mitsumoriURL) html += '<div class="card-row"><span class="card-label">見積書</span><span class="card-value"><a href="'+esc(c.mitsumoriURL)+'" target="_blank"
+  style="color:#3498db;text-decoration:none;">開く</a></span></div>';
+          html += '<div class="card-tasks">';
+          TASKS.forEach(function(t) {
+            var s = c.tasks[t] || '未着手';
+            html += '<div class="card-task-row"><span class="card-task-name">'+t+'</span>';
+            html += '<select class="status-select status-'+s+'" onchange="changeStatus(\''+escAttr(c.name)+'\',\''+escAttr(t)+'\',this)">';
+            STATUSES.forEach(function(st) { html += '<option value="'+st+'"'+(s===st?' selected':'')+'>'+st+'</option>'; });
+            html += '</select></div>';
+          });
+          html += '</div></div></div>';
+        });
+        if (!filtered.length) html = '<p style="text-align:center;padding:32px;color:#999">事業者がいません</p>';
+        document.getElementById('cardList').innerHTML = html;
+      }
+      function renderProspectStats() {
+        var total = prospects.length;
+        var goui = prospects.filter(function(p) { return p.kakudo==='口頭合意'||p.kakudo==='契約締結'; }).length;
+        document.getElementById('prospectStatsArea').innerHTML =
+          '<div class="stat-card"><div class="num num-total">'+total+'</div><div class="label">案件数</div></div>' +
+          '<div class="stat-card"><div class="num num-合意">'+goui+'</div><div class="label">口頭合意以上</div></div>';
+      }
+      function renderProspectTable() {
+        document.getElementById('prospectHead').innerHTML =
+          '<tr><th>会社名</th><th>アポ日</th><th>担当者</th><th>確度</th><th>見込みGMV</th><th>見積もり</th><th>見積もり合計</th><th>見積書</th><th>ネクストアクション</th><th>備考</th><th>操作</th></tr>';
+        var body = '';
+        prospects.forEach(function(p) {
+          var k = p.kakudo || 'アプローチ中';
+          var urlHtml = p.mitsumoriURL ? '<a href="'+esc(p.mitsumoriURL)+'" target="_blank" onclick="event.stopPropagation()" style="color:#3498db;font-size:11px;text-decoration:none;">開く</a>' : '<span
+  class="item-empty">＋URL</span>';
+          body += '<tr>';
+          body += '<td>'+esc(p.name)+'</td>';
+          body += '<td style="cursor:pointer" onclick="editProspectDate(\''+escAttr(p.name)+'\',this)">'+(p.appoDate||'-')+'</td>';
+          body += '<td style="cursor:pointer" onclick="editProspectText(\''+escAttr(p.name)+'\',\'tantousha\',this)">'+(p.tantousha?esc(p.tantousha):'<span class="item-empty">-</span>')+'</td>';
+          body += '<td><select class="kakudo-select kakudo-'+k+'" onchange="changeKakudo(\''+escAttr(p.name)+'\',this)">';
+          KAKUDO_LIST.forEach(function(kk) { body += '<option value="'+kk+'"'+(k===kk?' selected':'')+'>'+kk+'</option>'; });
           body += '</select></td>';
+          body += '<td style="cursor:pointer" onclick="editProspectNumber(\''+escAttr(p.name)+'\',\'mikomiGMV\',this)">'+(p.mikomiGMV!==undefined?p.mikomiGMV.toLocaleString()+'円':'-')+'</td>';
+          body += '<td style="cursor:pointer" onclick="editProspectNumber(\''+escAttr(p.name)+'\',\'mitsumori\',this)">'+(p.mitsumori!==undefined?p.mitsumori.toLocaleString()+'円':'-')+'</td>';
+          body += '<td style="cursor:pointer"
+  onclick="editProspectNumber(\''+escAttr(p.name)+'\',\'mitsumoriGokei\',this)">'+(p.mitsumoriGokei!==undefined?p.mitsumoriGokei.toLocaleString()+'円':'-')+'</td>';
+          body += '<td class="url-cell" onclick="openUrlModal(\'prospect\',\''+escAttr(p.name)+'\')">' + urlHtml + '</td>';
+          body += '<td style="cursor:pointer" onclick="editProspectText(\''+escAttr(p.name)+'\',\'nextAction\',this)">'+(p.nextAction?esc(p.nextAction):'<span
+  class="item-empty">＋アクション</span>')+'</td>';
+          body += '<td class="memo-cell'+(p.jokyo?'':' memo-empty')+'" onclick="openJokyoModal(\''+escAttr(p.name)+'\')">'+(p.jokyo?esc(p.jokyo):'＋備考')+'</td>';
+          body += '<td style="white-space:nowrap"><button class="btn-juchu" onclick="juchuProspect(\''+escAttr(p.name)+'\')">受注</button> ';
+          body += '<button onclick="deleteProspect(\''+escAttr(p.name)+'\')" style="background:none;border:none;color:#ccc;cursor:pointer;font-size:16px;">\xD7</button></td>';
+          body += '</tr>';
         });
-        body += '</tr>';
-      });
-      if (!filtered.length) body = '<tr><td colspan="'+(TASKS.length+12)+'" style="text-align:center;padding:32px;color:#999">事業者がいません</td></tr>';
-      document.getElementById('tableBody').innerHTML = body;
-    }
-
-    function renderCards() {
-      var filtered = allData.filter(function(c) { return showCompleted || !isAllDone(c); });
-      var html = '';
-      filtered.forEach(function(c) {
-        var hatchuu = c.hatchuu || [], diff = '', diffClass = '';
-        if (c.mitsumoriKingaku !== undefined && c.insatsuMitsumori !== undefined) {
-          var d = c.mitsumoriKingaku - c.insatsuMitsumori;
-          diffClass = d >= 0 ? 'diff-plus' : 'diff-minus';
-          diff = (d >= 0 ? '+' : '') + d.toLocaleString() + '円';
-        }
-        html += '<div class="company-card'+(isAllDone(c)?' card-done':'')+'"><div class="card-header" onclick="toggleCard(this)">';
-        html += '<span class="company-name">'+esc(c.name)+'</span>';
-        html += '<div style="display:flex;align-items:center;gap:8px;"><button onclick="event.stopPropagation();deleteCompany(\''+escAttr(c.name)+'\')" class="card-delete">\xD7</button><span
-  class="card-toggle">▼</span></div></div>';
-        html += '<div class="card-body">';
-        [['担当者',c.tantousha||'-'],['発行枚数',c.hakkouMaisuu!==undefined?c.hakkouMaisuu.toLocaleString():'-'],
-         ['デザイン数',c.designSuu!==undefined?c.designSuu:'-'],['発注内容',hatchuu.length?hatchuu.join('・'):'-'],
-         ['納品日',c.nouhinbi||'-'],['提示見積もり',c.mitsumoriKingaku!==undefined?c.mitsumoriKingaku.toLocaleString()+'円':'-'],
-         ['印刷会社見積もり',c.insatsuMitsumori!==undefined?c.insatsuMitsumori.toLocaleString()+'円':'-'],
-         ['見積もり合計',c.mitsumoriGokei!==undefined?c.mitsumoriGokei.toLocaleString()+'円':'-'],
-         ['差分',diff||'-'],['備考',c.memo||'-']
-        ].forEach(function(row) {
-          html += '<div class="card-row"><span class="card-label">'+row[0]+'</span><span class="card-value'+(row[0]==='差分'?' '+diffClass:'')+'">'+esc(String(row[1]))+'</span></div>';
-        });
-        if (c.mitsumoriURL) html += '<div class="card-row"><span class="card-label">見積書</span><span class="card-value"><a href="'+esc(c.mitsumoriURL)+'" target="_blank"
-  style="color:#3498db;text-decoration:none;">開く</a></span></div>';
-        html += '<div class="card-tasks">';
-        TASKS.forEach(function(t) {
-          var s = c.tasks[t] || '未着手';
-          html += '<div class="card-task-row"><span class="card-task-name">'+t+'</span>';
-          html += '<select class="status-select status-'+s+'" onchange="changeStatus(\''+escAttr(c.name)+'\',\''+escAttr(t)+'\',this)">';
-          STATUSES.forEach(function(st) { html += '<option value="'+st+'"'+(s===st?' selected':'')+'>'+st+'</option>'; });
-          html += '</select></div>';
-        });
-        html += '</div></div></div>';
-      });
-      if (!filtered.length) html = '<p style="text-align:center;padding:32px;color:#999">事業者がいません</p>';
-      document.getElementById('cardList').innerHTML = html;
-    }
-
-    function renderProspectStats() {
-      var total = prospects.length;
-      var goui = prospects.filter(function(p) { return p.kakudo==='口頭合意'||p.kakudo==='契約締結'; }).length;
-      document.getElementById('prospectStatsArea').innerHTML =
-        '<div class="stat-card"><div class="num num-total">'+total+'</div><div class="label">案件数</div></div>' +
-        '<div class="stat-card"><div class="num num-合意">'+goui+'</div><div class="label">口頭合意以上</div></div>';
-    }
-
-    function renderProspectTable() {
-      document.getElementById('prospectHead').innerHTML =
-        '<tr><th>会社名</th><th>アポ日</th><th>担当者</th><th>確度</th><th>見込みGMV</th><th>見積もり</th><th>見積もり合計</th><th>見積書</th><th>ネクストアクション</th><th>備考</th><th>操作</th></tr>';
-      var body = '';
-      prospects.forEach(function(p) {
-        var k = p.kakudo || 'アプローチ中';
-        var urlHtml = p.mitsumoriURL ? '<a href="'+esc(p.mitsumoriURL)+'" target="_blank" onclick="event.stopPropagation()" style="color:#3498db;font-size:11px;text-decoration:none;">開く</a>' : '<span
-  class="item-empty">＋URL</span>';
-        body += '<tr>';
-        body += '<td>'+esc(p.name)+'</td>';
-        body += '<td style="cursor:pointer" onclick="editProspectDate(\''+escAttr(p.name)+'\',this)">'+(p.appoDate||'-')+'</td>';
-        body += '<td style="cursor:pointer" onclick="editProspectText(\''+escAttr(p.name)+'\',\'tantousha\',this)">'+(p.tantousha?esc(p.tantousha):'<span class="item-empty">-</span>')+'</td>';
-        body += '<td><select class="kakudo-select kakudo-'+k+'" onchange="changeKakudo(\''+escAttr(p.name)+'\',this)">';
-        KAKUDO_LIST.forEach(function(kk) { body += '<option value="'+kk+'"'+(k===kk?' selected':'')+'>'+kk+'</option>'; });
-        body += '</select></td>';
-        body += '<td style="cursor:pointer" onclick="editProspectNumber(\''+escAttr(p.name)+'\',\'mikomiGMV\',this)">'+(p.mikomiGMV!==undefined?p.mikomiGMV.toLocaleString()+'円':'-')+'</td>';
-        body += '<td style="cursor:pointer" onclick="editProspectNumber(\''+escAttr(p.name)+'\',\'mitsumori\',this)">'+(p.mitsumori!==undefined?p.mitsumori.toLocaleString()+'円':'-')+'</td>';
-        body += '<td style="cursor:pointer" onclick="editProspectNumber(\''+escAttr(p.name)+'\',\'mitsumoriGokei\',this)">'+(p.mitsumoriGokei!==undefined?p.mitsumoriGokei.toLocaleString()+'円':'-')+'</td>';
-        body += '<td class="url-cell" onclick="openUrlModal(\'prospect\',\''+escAttr(p.name)+'\')">' + urlHtml + '</td>';
-        body += '<td style="cursor:pointer" onclick="editProspectText(\''+escAttr(p.name)+'\',\'nextAction\',this)">'+(p.nextAction?esc(p.nextAction):'<span class="item-empty">＋アクション</span>')+'</td>';
-        body += '<td class="memo-cell'+(p.jokyo?'':' memo-empty')+'" onclick="openJokyoModal(\''+escAttr(p.name)+'\')">'+(p.jokyo?esc(p.jokyo):'＋備考')+'</td>';
-        body += '<td style="white-space:nowrap"><button class="btn-juchu" onclick="juchuProspect(\''+escAttr(p.name)+'\')">受注</button> ';
-        body += '<button onclick="deleteProspect(\''+escAttr(p.name)+'\')" style="background:none;border:none;color:#ccc;cursor:pointer;font-size:16px;">\xD7</button></td>';
-        body += '</tr>';
-      });
-      if (!prospects.length) body = '<tr><td colspan="11" style="text-align:center;padding:32px;color:#999">案件がありません</td></tr>';
-      document.getElementById('prospectBody').innerHTML = body;
-    }
-
-    function renderProspectCards() {
-      var html = '';
-      prospects.forEach(function(p) {
-        var k = p.kakudo || 'アプローチ中';
-        html += '<div class="company-card"><div class="card-header" onclick="toggleCard(this)">';
-        html += '<span class="company-name">'+esc(p.name)+'</span>';
-        html += '<div style="display:flex;align-items:center;gap:8px;"><button onclick="event.stopPropagation();deleteProspect(\''+escAttr(p.name)+'\')" class="card-delete">\xD7</button><span
-  class="card-toggle">▼</span></div></div>';
-        html += '<div class="card-body">';
-        html += '<div class="card-row"><span class="card-label">確度</span><span class="card-value"><select class="kakudo-select kakudo-'+k+'" onchange="changeKakudo(\''+escAttr(p.name)+'\',this)">';
-        KAKUDO_LIST.forEach(function(kk) { html += '<option value="'+kk+'"'+(k===kk?' selected':'')+'>'+kk+'</option>'; });
-        html += '</select></span></div>';
-        [['アポ日',p.appoDate||'-'],['担当者',p.tantousha||'-'],
-         ['見込みGMV',p.mikomiGMV!==undefined?p.mikomiGMV.toLocaleString()+'円':'-'],
-         ['見積もり',p.mitsumori!==undefined?p.mitsumori.toLocaleString()+'円':'-'],
-         ['見積もり合計',p.mitsumoriGokei!==undefined?p.mitsumoriGokei.toLocaleString()+'円':'-'],
-         ['ネクストアクション',p.nextAction||'-'],['備考',p.jokyo||'-']
-        ].forEach(function(row) {
-          html += '<div class="card-row"><span class="card-label">'+row[0]+'</span><span class="card-value">'+esc(String(row[1]))+'</span></div>';
-        });
-        if (p.mitsumoriURL) html += '<div class="card-row"><span class="card-label">見積書</span><span class="card-value"><a href="'+esc(p.mitsumoriURL)+'" target="_blank"
-  style="color:#3498db;text-decoration:none;">開く</a></span></div>';
-        html += '<div style="margin-top:12px;text-align:right;"><button class="btn-juchu" onclick="juchuProspect(\''+escAttr(p.name)+'\')">受注する</button></div>';
-        html += '</div></div>';
-      });
-      if (!prospects.length) html = '<p style="text-align:center;padding:32px;color:#999">案件がありません</p>';
-      document.getElementById('prospectCardList').innerHTML = html;
-    }
-
-    function changeKakudo(name, el) {
-      el.className = 'kakudo-select kakudo-' + el.value;
-      var p = prospects.find(function(pr) { return pr.name===name; });
-      if (p) p.kakudo = el.value;
-      renderProspectStats();
-      saveData().catch(function(e) { alert('保存失敗: '+e.message); });
-      updateTime();
-    }
-
-    function openAddProspectModal() {
-      ['pName','pAppoDate','pTantousha','pMikomiGMV','pMitsumori','pMitsumoriGokei','pMitsumoriURL','pNextAction','pJokyo'].forEach(function(id) { document.getElementById(id).value=''; });
-      document.getElementById('pKakudo').value = 'アプローチ中';
-      document.getElementById('addProspectModal').classList.add('show');
-      setTimeout(function() { document.getElementById('pName').focus(); }, 100);
-    }
-    function closeAddProspectModal() { document.getElementById('addProspectModal').classList.remove('show'); }
-
-    function addProspect() {
-      var name = document.getElementById('pName').value.trim();
-      if (!name) { alert('会社名を入力してください'); return; }
-      if (prospects.some(function(pr) { return pr.name===name; })) { alert('すでに存在します'); return; }
-      var p = { name:name, appoDate:document.getElementById('pAppoDate').value||'', tantousha:document.getElementById('pTantousha').value.trim(), kakudo:document.getElementById('pKakudo').value,
-  nextAction:document.getElementById('pNextAction').value.trim(), jokyo:document.getElementById('pJokyo').value.trim() };
-      var gmv=document.getElementById('pMikomiGMV').value, mit=document.getElementById('pMitsumori').value, gokei=document.getElementById('pMitsumoriGokei').value,
-  url=document.getElementById('pMitsumoriURL').value.trim();
-      if (gmv!=='') p.mikomiGMV=Number(gmv);
-      if (mit!=='') p.mitsumori=Number(mit);
-      if (gokei!=='') p.mitsumoriGokei=Number(gokei);
-      if (url!=='') p.mitsumoriURL=url;
-      prospects.push(p);
-      renderProspectStats(); renderProspectTable(); renderProspectCards();
-      closeAddProspectModal();
-      saveData().catch(function(e) { alert('保存失敗: '+e.message); });
-      updateTime();
-    }
-
-    function deleteProspect(name) {
-      if (!confirm(name+' を削除しますか？')) return;
-      prospects = prospects.filter(function(pr) { return pr.name!==name; });
-      renderProspectStats(); renderProspectTable(); renderProspectCards();
-      saveData().catch(function(e) { alert('保存失敗: '+e.message); });
-    }
-
-    function juchuProspect(name) {
-      if (!confirm(name+' を受注済みに移動しますか？')) return;
-      var p = prospects.find(function(pr) { return pr.name===name; });
-      if (!p) return;
-      if (allData.some(function(c) { return c.name===name; })) { alert(name+' はすでに受注済みに存在します'); return; }
-      var newC = { name:name, tasks:{} };
-      if (p.tantousha) newC.tantousha = p.tantousha;
-      if (p.mitsumori!==undefined) newC.mitsumoriKingaku = p.mitsumori;
-      if (p.mitsumoriGokei!==undefined) newC.mitsumoriGokei = p.mitsumoriGokei;
-      if (p.mitsumoriURL) newC.mitsumoriURL = p.mitsumoriURL;
-      TASKS.forEach(function(t) { newC.tasks[t]='未着手'; });
-      allData.push(newC);
-      prospects = prospects.filter(function(pr) { return pr.name!==name; });
-      render(); switchTab('orders');
-      saveData().catch(function(e) { alert('保存失敗: '+e.message); });
-      updateTime();
-    }
-
-    function editProspectDate(name, cell) {
-      var p = prospects.find(function(pr) { return pr.name===name; });
-      var input = document.createElement('input');
-      input.type='date'; input.value=p?(p.appoDate||')':'';
-      input.style.cssText='font-size:12px;border:1px solid #3498db;border-radius:4px;padding:2px;';
-      cell.textContent=''; cell.appendChild(input); input.focus();
-      input.showPicker && input.showPicker();
-      function save() { if(p) p.appoDate=input.value||''; renderProspectTable(); saveData().catch(function(e){alert('保存失敗: '+e.message);}); }
-      input.addEventListener('blur',save);
-      input.addEventListener('keydown',function(e){if(e.key==='Enter')input.blur();if(e.key==='Escape')renderProspectTable();});
-    }
-
-    function editProspectText(name, field, cell) {
-      var p = prospects.find(function(pr) { return pr.name===name; });
-      var input = document.createElement('input');
-      input.type='text'; input.value=p?(p[field]||')':'';
-      input.style.cssText='width:120px;font-size:12px;border:1px solid #3498db;border-radius:4px;padding:2px 4px;';
-      cell.textContent=''; cell.appendChild(input); input.focus();
-      function save() { if(p) p[field]=input.value.trim(); renderProspectTable(); saveData().catch(function(e){alert('保存失敗: '+e.message);}); }
-      input.addEventListener('blur',save);
-      input.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.isComposing)input.blur();if(e.key==='Escape')renderProspectTable();});
-    }
-
-    function editProspectNumber(name, field, cell) {
-      var p = prospects.find(function(pr) { return pr.name===name; });
-      var input = document.createElement('input');
-      input.type='number'; input.value=p&&p[field]!==undefined?p[field]:'';
-      input.style.cssText='width:100px;font-size:12px;text-align:center;border:1px solid #3498db;border-radius:4px;';
-      cell.textContent=''; cell.appendChild(input); input.focus();
-      function save() { if(p){if(input.value!=='')p[field]=Number(input.value);else delete p[field];} renderProspectTable(); saveData().catch(function(e){alert('保存失敗: '+e.message);}); }
-      input.addEventListener('blur',save);
-      input.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.isComposing)input.blur();if(e.key==='Escape')renderProspectTable();});
-    }
-
-    function openJokyoModal(name) {
-      jokyoTargetName=name;
-      var p=prospects.find(function(pr){return pr.name===name;});
-      document.getElementById('jokyoModalTitle').textContent=name+' の備考';
-      document.getElementById('jokyoInput').value=p?(p.jokyo||')':'';
-      document.getElementById('jokyoModal').classList.add('show');
-      setTimeout(function(){document.getElementById('jokyoInput').focus();},100);
-    }
-    function closeJokyoModal() { document.getElementById('jokyoModal').classList.remove('show'); jokyoTargetName=''; }
-    function saveJokyo() {
-      var p=prospects.find(function(pr){return pr.name===jokyoTargetName;});
-      if(p) p.jokyo=document.getElementById('jokyoInput').value.trim();
-      closeJokyoModal(); renderProspectTable(); renderProspectCards();
-      saveData().catch(function(e){alert('保存失敗: '+e.message);}); updateTime();
-    }
-
-    function openUrlModal(type, name) {
-      urlTarget={type:type,name:name};
-      var obj=type==='company'?allData.find(function(c){return c.name===name;}):prospects.find(function(p){return p.name===name;});
-      var url=obj?(obj.mitsumoriURL||')':'';
-      document.getElementById('urlModalTitle').textContent=name+' の見積書URL';
-      document.getElementById('urlInput').value=url;
-      document.getElementById('urlOpenBtn').style.display=url?'inline-block':'none';
-      document.getElementById('urlModal').classList.add('show');
-      setTimeout(function(){document.getElementById('urlInput').focus();},100);
-    }
-    function closeUrlModal() { document.getElementById('urlModal').classList.remove('show'); urlTarget={type:'',name:''}; }
-    function openUrlInModal() { var url=document.getElementById('urlInput').value.trim(); if(url) window.open(url,'_blank'); }
-    function saveUrl() {
-      var url=document.getElementById('urlInput').value.trim();
-      if(urlTarget.type==='company'){
-        var c=allData.find(function(c){return c.name===urlTarget.name;}); if(c) c.mitsumoriURL=url;
-        renderTable(); renderCards();
-      } else {
-        var p=prospects.find(function(pr){return pr.name===urlTarget.name;}); if(p) p.mitsumoriURL=url;
-        renderProspectTable(); renderProspectCards();
+        if (!prospects.length) body = '<tr><td colspan="11" style="text-align:center;padding:32px;color:#999">案件がありません</td></tr>';
+        document.getElementById('prospectBody').innerHTML = body;
       }
-      closeUrlModal(); saveData().catch(function(e){alert('保存失敗: '+e.message);}); updateTime();
-    }
-
-    function editCompanyText(name, field, cell) {
-      var company=allData.find(function(c){return c.name===name;});
-      var input=document.createElement('input');
-      input.type='text'; input.value=company?(company[field]||')':'';
-      input.style.cssText='width:100px;font-size:12px;border:1px solid #3498db;border-radius:4px;padding:2px 4px;';
-      cell.textContent=''; cell.appendChild(input); input.focus();
-      function save(){if(company)company[field]=input.value.trim();renderTable();saveData().catch(function(e){alert('保存失敗: '+e.message);});}
-      input.addEventListener('blur',save);
-      input.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.isComposing)input.blur();if(e.key==='Escape')renderTable();});
-    }
-
-    function toggleCard(header) { header.classList.toggle('open'); header.nextElementSibling.classList.toggle('open'); }
-
-    function changeStatus(name, task, el) {
-      el.className='status-select status-'+el.value;
-      var company=allData.find(function(c){return c.name===name;});
-      if(company) company.tasks[task]=el.value;
-      renderStats();
-      if(!showCompleted&&isAllDone(company)) render();
-      saveData().catch(function(e){alert('保存失敗: '+e.message);}); updateTime();
-    }
-
-    function toggleCompleted() {
-      showCompleted=!showCompleted;
-      document.getElementById('toggleBtn').textContent=showCompleted?'完了済みを非表示':'完了済みを表示';
-      render();
-    }
-
-    function openAddModal() {
-      ['newCompanyName','newTantousha','newHakkouMaisuu','newDesignSuu','newNouhinbi','newMitsumoriKingaku','newInsatsuMitsumori','newMitsumoriGokei','newMitsumoriURL','newMemo'].forEach(function(id){documen
-  t.getElementById(id).value='';});
-      document.querySelectorAll('input[name="newHatchuu"]').forEach(function(cb){cb.checked=false;});
-      document.getElementById('addModal').classList.add('show');
-      setTimeout(function(){document.getElementById('newCompanyName').focus();},100);
-    }
-    function closeAddModal() { document.getElementById('addModal').classList.remove('show'); }
-
-    function openMemoModal(name) {
-      memoTargetName=name;
-      var company=allData.find(function(c){return c.name===name;});
-      document.getElementById('memoModalTitle').textContent=name+' の備考';
-      document.getElementById('memoInput').value=company?(company.memo||')':'';
-      document.getElementById('memoModal').classList.add('show');
-      setTimeout(function(){document.getElementById('memoInput').focus();},100);
-    }
-    function closeMemoModal() { document.getElementById('memoModal').classList.remove('show'); memoTargetName=''; }
-    function saveMemo() {
-      var company=allData.find(function(c){return c.name===memoTargetName;});
-      if(company) company.memo=document.getElementById('memoInput').value.trim();
-      closeMemoModal(); render();
-      saveData().catch(function(e){alert('保存失敗: '+e.message);}); updateTime();
-    }
-
-    function openHatchuuModal(name) {
-      hatchuuTargetName=name;
-      var company=allData.find(function(c){return c.name===name;});
-      var current=company?(company.hatchuu||[]):[];
-      document.getElementById('hatchuuModalTitle').textContent=name+' の発注内容';
-      document.querySelectorAll('input[name="editHatchuu"]').forEach(function(cb){cb.checked=current.indexOf(cb.value)!==-1;});
-      document.getElementById('hatcuuModal').classList.add('show');
-    }
-    function closeHatchuuModal() { document.getElementById('hatcuuModal').classList.remove('show'); hatchuuTargetName=''; }
-    function saveHatchuu() {
-      var company=allData.find(function(c){return c.name===hatchuuTargetName;});
-      if(company){company.hatchuu=[];document.querySelectorAll('input[name="editHatchuu"]:checked').forEach(function(cb){company.hatchuu.push(cb.value);});}
-      closeHatchuuModal(); render();
-      saveData().catch(function(e){alert('保存失敗: '+e.message);}); updateTime();
-    }
-
-    function deleteCompany(name) {
-      if(!confirm(name+' を削除しますか？')) return;
-      allData=allData.filter(function(c){return c.name!==name;});
-      render(); saveData().catch(function(e){alert('保存失敗: '+e.message);});
-    }
-
-    function editNumber(name, field, cell) {
-      var current=cell.textContent.replace(/[^0-9\-]/g,'');
-      var input=document.createElement('input');
-      input.type='number'; input.value=current;
-      input.style.cssText='width:80px;font-size:12px;text-align:center;border:1px solid #3498db;border-radius:4px;';
-      cell.textContent=''; cell.appendChild(input); input.focus();
-      function save(){var company=allData.find(function(c){return c.name===name;});if(company){if(input.value!=='')company[field]=Number(input.value);else delete
+      function renderProspectCards() {
+        var html = '';
+        prospects.forEach(function(p) {
+          var k = p.kakudo || 'アプローチ中';
+          html += '<div class="company-card"><div class="card-header" onclick="toggleCard(this)">';
+          html += '<span class="company-name">'+esc(p.name)+'</span>';
+          html += '<div style="display:flex;align-items:center;gap:8px;"><button onclick="event.stopPropagation();deleteProspect(\''+escAttr(p.name)+'\')" class="card-delete">\xD7</button><span
+  class="card-toggle">▼</span></div></div>';
+          html += '<div class="card-body">';
+          html += '<div class="card-row"><span class="card-label">確度</span><span class="card-value"><select class="kakudo-select kakudo-'+k+'" onchange="changeKakudo(\''+escAttr(p.name)+'\',this)">';
+          KAKUDO_LIST.forEach(function(kk) { html += '<option value="'+kk+'"'+(k===kk?' selected':'')+'>'+kk+'</option>'; });
+          html += '</select></span></div>';
+          [['アポ日',p.appoDate||'-'],['担当者',p.tantousha||'-'],
+           ['見込みGMV',p.mikomiGMV!==undefined?p.mikomiGMV.toLocaleString()+'円':'-'],
+           ['見積もり',p.mitsumori!==undefined?p.mitsumori.toLocaleString()+'円':'-'],
+           ['見積もり合計',p.mitsumoriGokei!==undefined?p.mitsumoriGokei.toLocaleString()+'円':'-'],
+           ['ネクストアクション',p.nextAction||'-'],['備考',p.jokyo||'-']
+          ].forEach(function(row) {
+            html += '<div class="card-row"><span class="card-label">'+row[0]+'</span><span class="card-value">'+esc(String(row[1]))+'</span></div>';
+          });
+          if (p.mitsumoriURL) html += '<div class="card-row"><span class="card-label">見積書</span><span class="card-value"><a href="'+esc(p.mitsumoriURL)+'" target="_blank"
+  style="color:#3498db;text-decoration:none;">開く</a></span></div>';
+          html += '<div style="margin-top:12px;text-align:right;"><button class="btn-juchu" onclick="juchuProspect(\''+escAttr(p.name)+'\')">受注する</button></div>';
+          html += '</div></div>';
+        });
+        if (!prospects.length) html = '<p style="text-align:center;padding:32px;color:#999">案件がありません</p>';
+        document.getElementById('prospectCardList').innerHTML = html;
+      }
+      function changeKakudo(name, el) {
+        el.className = 'kakudo-select kakudo-' + el.value;
+        var p = prospects.find(function(pr) { return pr.name===name; });
+        if (p) p.kakudo = el.value;
+        renderProspectStats();
+        saveData().catch(function(e) { alert('保存失敗: '+e.message); });
+        updateTime();
+      }
+      function openAddProspectModal() {
+        ['pName','pAppoDate','pTantousha','pMikomiGMV','pMitsumori','pMitsumoriGokei','pMitsumoriURL','pNextAction','pJokyo'].forEach(function(id) { document.getElementById(id).value=''; });
+        document.getElementById('pKakudo').value = 'アプローチ中';
+        document.getElementById('addProspectModal').classList.add('show');
+        setTimeout(function() { document.getElementById('pName').focus(); }, 100);
+      }
+      function closeAddProspectModal() { document.getElementById('addProspectModal').classList.remove('show'); }
+      function addProspect() {
+        var name = document.getElementById('pName').value.trim();
+        if (!name) { alert('会社名を入力してください'); return; }
+        if (prospects.some(function(pr) { return pr.name===name; })) { alert('すでに存在します'); return; }
+        var p = { name:name, appoDate:document.getElementById('pAppoDate').value||'', tantousha:document.getElementById('pTantousha').value.trim(), kakudo:document.getElementById('pKakudo').value,
+  nextAction:document.getElementById('pNextAction').value.trim(), jokyo:document.getElementById('pJokyo').value.trim() };
+        var gmv=document.getElementById('pMikomiGMV').value, mit=document.getElementById('pMitsumori').value, gokei=document.getElementById('pMitsumoriGokei').value,
+  url=document.getElementById('pMitsumoriURL').value.trim();
+        if (gmv!=='') p.mikomiGMV=Number(gmv);
+        if (mit!=='') p.mitsumori=Number(mit);
+        if (gokei!=='') p.mitsumoriGokei=Number(gokei);
+        if (url!=='') p.mitsumoriURL=url;
+        prospects.push(p);
+        renderProspectStats(); renderProspectTable(); renderProspectCards();
+        closeAddProspectModal();
+        saveData().catch(function(e) { alert('保存失敗: '+e.message); });
+        updateTime();
+      }
+      function deleteProspect(name) {
+        if (!confirm(name+' を削除しますか？')) return;
+        prospects = prospects.filter(function(pr) { return pr.name!==name; });
+        renderProspectStats(); renderProspectTable(); renderProspectCards();
+        saveData().catch(function(e) { alert('保存失敗: '+e.message); });
+      }
+      function juchuProspect(name) {
+        if (!confirm(name+' を受注済みに移動しますか？')) return;
+        var p = prospects.find(function(pr) { return pr.name===name; });
+        if (!p) return;
+        if (allData.some(function(c) { return c.name===name; })) { alert(name+' はすでに受注済みに存在します'); return; }
+        var newC = { name:name, tasks:{} };
+        if (p.tantousha) newC.tantousha = p.tantousha;
+        if (p.mitsumori!==undefined) newC.mitsumoriKingaku = p.mitsumori;
+        if (p.mitsumoriGokei!==undefined) newC.mitsumoriGokei = p.mitsumoriGokei;
+        if (p.mitsumoriURL) newC.mitsumoriURL = p.mitsumoriURL;
+        TASKS.forEach(function(t) { newC.tasks[t]='未着手'; });
+        allData.push(newC);
+        prospects = prospects.filter(function(pr) { return pr.name!==name; });
+        render(); switchTab('orders');
+        saveData().catch(function(e) { alert('保存失敗: '+e.message); });
+        updateTime();
+      }
+      function editProspectDate(name, cell) {
+        var p = prospects.find(function(pr) { return pr.name===name; });
+        var input = document.createElement('input');
+        input.type='date'; input.value=p?(p.appoDate||''):'';
+        input.style.cssText='font-size:12px;border:1px solid #3498db;border-radius:4px;padding:2px;';
+        cell.textContent=''; cell.appendChild(input); input.focus();
+        input.showPicker && input.showPicker();
+        function save() { if(p) p.appoDate=input.value||''; renderProspectTable(); saveData().catch(function(e){alert('保存失敗: '+e.message);}); }
+        input.addEventListener('blur',save);
+        input.addEventListener('keydown',function(e){if(e.key==='Enter')input.blur();if(e.key==='Escape')renderProspectTable();});
+      }
+      function editProspectText(name, field, cell) {
+        var p = prospects.find(function(pr) { return pr.name===name; });
+        var input = document.createElement('input');
+        input.type='text'; input.value=p?(p[field]||''):'';
+        input.style.cssText='width:120px;font-size:12px;border:1px solid #3498db;border-radius:4px;padding:2px 4px;';
+        cell.textContent=''; cell.appendChild(input); input.focus();
+        function save() { if(p) p[field]=input.value.trim(); renderProspectTable(); saveData().catch(function(e){alert('保存失敗: '+e.message);}); }
+        input.addEventListener('blur',save);
+        input.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.isComposing)input.blur();if(e.key==='Escape')renderProspectTable();});
+      }
+      function editProspectNumber(name, field, cell) {
+        var p = prospects.find(function(pr) { return pr.name===name; });
+        var input = document.createElement('input');
+        input.type='number'; input.value=p&&p[field]!==undefined?p[field]:'';
+        input.style.cssText='width:100px;font-size:12px;text-align:center;border:1px solid #3498db;border-radius:4px;';
+        cell.textContent=''; cell.appendChild(input); input.focus();
+        function save() { if(p){if(input.value!=='')p[field]=Number(input.value);else delete p[field];} renderProspectTable(); saveData().catch(function(e){alert('保存失敗: '+e.message);}); }
+        input.addEventListener('blur',save);
+        input.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.isComposing)input.blur();if(e.key==='Escape')renderProspectTable();});
+      }
+      function openJokyoModal(name) {
+        jokyoTargetName=name;
+        var p=prospects.find(function(pr){return pr.name===name;});
+        document.getElementById('jokyoModalTitle').textContent=name+' の備考';
+        document.getElementById('jokyoInput').value=p?(p.jokyo||''):'';
+        document.getElementById('jokyoModal').classList.add('show');
+        setTimeout(function(){document.getElementById('jokyoInput').focus();},100);
+      }
+      function closeJokyoModal() { document.getElementById('jokyoModal').classList.remove('show'); jokyoTargetName=''; }
+      function saveJokyo() {
+        var p=prospects.find(function(pr){return pr.name===jokyoTargetName;});
+        if(p) p.jokyo=document.getElementById('jokyoInput').value.trim();
+        closeJokyoModal(); renderProspectTable(); renderProspectCards();
+        saveData().catch(function(e){alert('保存失敗: '+e.message);}); updateTime();
+      }
+      function openUrlModal(type, name) {
+        urlTarget={type:type,name:name};
+        var obj=type==='company'?allData.find(function(c){return c.name===name;}):prospects.find(function(p){return p.name===name;});
+        var url=obj?(obj.mitsumoriURL||''):'';
+        document.getElementById('urlModalTitle').textContent=name+' の見積書URL';
+        document.getElementById('urlInput').value=url;
+        document.getElementById('urlOpenBtn').style.display=url?'inline-block':'none';
+        document.getElementById('urlModal').classList.add('show');
+        setTimeout(function(){document.getElementById('urlInput').focus();},100);
+      }
+      function closeUrlModal() { document.getElementById('urlModal').classList.remove('show'); urlTarget={type:'',name:''}; }
+      function openUrlInModal() { var url=document.getElementById('urlInput').value.trim(); if(url) window.open(url,'_blank'); }
+      function saveUrl() {
+        var url=document.getElementById('urlInput').value.trim();
+        if(urlTarget.type==='company'){
+          var c=allData.find(function(c){return c.name===urlTarget.name;}); if(c) c.mitsumoriURL=url;
+          renderTable(); renderCards();
+        } else {
+          var p=prospects.find(function(pr){return pr.name===urlTarget.name;}); if(p) p.mitsumoriURL=url;
+          renderProspectTable(); renderProspectCards();
+        }
+        closeUrlModal(); saveData().catch(function(e){alert('保存失敗: '+e.message);}); updateTime();
+      }
+      function editCompanyText(name, field, cell) {
+        var company=allData.find(function(c){return c.name===name;});
+        var input=document.createElement('input');
+        input.type='text'; input.value=company?(company[field]||''):'';
+        input.style.cssText='width:100px;font-size:12px;border:1px solid #3498db;border-radius:4px;padding:2px 4px;';
+        cell.textContent=''; cell.appendChild(input); input.focus();
+        function save(){if(company)company[field]=input.value.trim();renderTable();saveData().catch(function(e){alert('保存失敗: '+e.message);});}
+        input.addEventListener('blur',save);
+        input.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.isComposing)input.blur();if(e.key==='Escape')renderTable();});
+      }
+      function toggleCard(header) { header.classList.toggle('open'); header.nextElementSibling.classList.toggle('open'); }
+      function changeStatus(name, task, el) {
+        el.className='status-select status-'+el.value;
+        var company=allData.find(function(c){return c.name===name;});
+        if(company) company.tasks[task]=el.value;
+        renderStats();
+        if(!showCompleted&&isAllDone(company)) render();
+        saveData().catch(function(e){alert('保存失敗: '+e.message);}); updateTime();
+      }
+      function toggleCompleted() {
+        showCompleted=!showCompleted;
+        document.getElementById('toggleBtn').textContent=showCompleted?'完了済みを非表示':'完了済みを表示';
+        render();
+      }
+      function openAddModal() {
+        ['newCompanyName','newTantousha','newHakkouMaisuu','newDesignSuu','newNouhinbi','newMitsumoriKingaku','newInsatsuMitsumori','newMitsumoriGokei','newMitsumoriURL','newMemo'].forEach(function(id){docum
+  ent.getElementById(id).value='';});
+        document.querySelectorAll('input[name="newHatchuu"]').forEach(function(cb){cb.checked=false;});
+        document.getElementById('addModal').classList.add('show');
+        setTimeout(function(){document.getElementById('newCompanyName').focus();},100);
+      }
+      function closeAddModal() { document.getElementById('addModal').classList.remove('show'); }
+      function openMemoModal(name) {
+        memoTargetName=name;
+        var company=allData.find(function(c){return c.name===name;});
+        document.getElementById('memoModalTitle').textContent=name+' の備考';
+        document.getElementById('memoInput').value=company?(company.memo||''):'';
+        document.getElementById('memoModal').classList.add('show');
+        setTimeout(function(){document.getElementById('memoInput').focus();},100);
+      }
+      function closeMemoModal() { document.getElementById('memoModal').classList.remove('show'); memoTargetName=''; }
+      function saveMemo() {
+        var company=allData.find(function(c){return c.name===memoTargetName;});
+        if(company) company.memo=document.getElementById('memoInput').value.trim();
+        closeMemoModal(); render();
+        saveData().catch(function(e){alert('保存失敗: '+e.message);}); updateTime();
+      }
+      function openHatchuuModal(name) {
+        hatchuuTargetName=name;
+        var company=allData.find(function(c){return c.name===name;});
+        var current=company?(company.hatchuu||[]):[];
+        document.getElementById('hatchuuModalTitle').textContent=name+' の発注内容';
+        document.querySelectorAll('input[name="editHatchuu"]').forEach(function(cb){cb.checked=current.indexOf(cb.value)!==-1;});
+        document.getElementById('hatcuuModal').classList.add('show');
+      }
+      function closeHatchuuModal() { document.getElementById('hatcuuModal').classList.remove('show'); hatchuuTargetName=''; }
+      function saveHatchuu() {
+        var company=allData.find(function(c){return c.name===hatchuuTargetName;});
+        if(company){company.hatchuu=[];document.querySelectorAll('input[name="editHatchuu"]:checked').forEach(function(cb){company.hatchuu.push(cb.value);});}
+        closeHatchuuModal(); render();
+        saveData().catch(function(e){alert('保存失敗: '+e.message);}); updateTime();
+      }
+      function deleteCompany(name) {
+        if(!confirm(name+' を削除しますか？')) return;
+        allData=allData.filter(function(c){return c.name!==name;});
+        render(); saveData().catch(function(e){alert('保存失敗: '+e.message);});
+      }
+      function editNumber(name, field, cell) {
+        var current=cell.textContent.replace(/[^0-9\-]/g,'');
+        var input=document.createElement('input');
+        input.type='number'; input.value=current;
+        input.style.cssText='width:80px;font-size:12px;text-align:center;border:1px solid #3498db;border-radius:4px;';
+        cell.textContent=''; cell.appendChild(input); input.focus();
+        function save(){var company=allData.find(function(c){return c.name===name;});if(company){if(input.value!=='')company[field]=Number(input.value);else delete
   company[field];}renderTable();saveData().catch(function(e){alert('保存失敗: '+e.message);});}
-      input.addEventListener('blur',save);
-      input.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.isComposing)input.blur();if(e.key==='Escape')renderTable();});
-    }
-
-    function editDate(name, cell) {
-      var company=allData.find(function(c){return c.name===name;});
-      var input=document.createElement('input');
-      input.type='date'; input.value=company?(company.nouhinbi||')':'';
-      input.style.cssText='font-size:12px;border:1px solid #3498db;border-radius:4px;padding:2px;';
-      cell.textContent=''; cell.appendChild(input); input.focus();
-      input.showPicker&&input.showPicker();
-      function save(){if(company)company.nouhinbi=input.value||'';renderTable();saveData().catch(function(e){alert('保存失敗: '+e.message);});}
-      input.addEventListener('blur',save);
-      input.addEventListener('keydown',function(e){if(e.key==='Enter')input.blur();if(e.key==='Escape')renderTable();});
-    }
-
-    function addCompany() {
-      var name=document.getElementById('newCompanyName').value.trim();
-      if(!name){alert('事業者名を入力してください');return;}
-      if(allData.some(function(c){return c.name===name;})){alert('すでに存在します');return;}
-      var newC={name:name,tasks:{}};
-      var tantousha=document.getElementById('newTantousha').value.trim();
-      var hakkouMaisuu=document.getElementById('newHakkouMaisuu').value;
-      var designSuu=document.getElementById('newDesignSuu').value;
-      var nouhinbi=document.getElementById('newNouhinbi').value;
-      var mitsumori=document.getElementById('newMitsumoriKingaku').value;
-      var insatsu=document.getElementById('newInsatsuMitsumori').value;
-      var gokei=document.getElementById('newMitsumoriGokei').value;
-      var url=document.getElementById('newMitsumoriURL').value.trim();
-      var memo=document.getElementById('newMemo').value.trim();
-      var hatchuu=[];
-      document.querySelectorAll('input[name="newHatchuu"]:checked').forEach(function(cb){hatchuu.push(cb.value);});
-      if(tantousha!=='')    newC.tantousha=tantousha;
-      if(hakkouMaisuu!=='') newC.hakkouMaisuu=Number(hakkouMaisuu);
-      if(designSuu!=='')    newC.designSuu=Number(designSuu);
-      if(nouhinbi!=='')     newC.nouhinbi=nouhinbi;
-      if(mitsumori!=='')    newC.mitsumoriKingaku=Number(mitsumori);
-      if(insatsu!=='')      newC.insatsuMitsumori=Number(insatsu);
-      if(gokei!=='')        newC.mitsumoriGokei=Number(gokei);
-      if(url!=='')          newC.mitsumoriURL=url;
-      if(memo!=='')         newC.memo=memo;
-      if(hatchuu.length)    newC.hatchuu=hatchuu;
-      TASKS.forEach(function(t){newC.tasks[t]='未着手';});
-      allData.push(newC);
-      render(); closeAddModal();
-      saveData().catch(function(e){alert('保存失敗: '+e.message);});
-    }
-
-    function updateTime() { document.getElementById('lastUpdated').textContent='最終更新: '+new Date().toLocaleTimeString('ja-JP'); }
-    function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-    function escAttr(s) { return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
-
-    document.getElementById('newCompanyName').addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.isComposing)addCompany();if(e.key==='Escape')closeAddModal();});
-    document.getElementById('tokenInput').addEventListener('keydown',function(e){if(e.key==='Enter')saveToken();});
-
-    init();
-    </script>                                                                                                                                                                                                    
-    </body>         
-    </html> 
+        input.addEventListener('blur',save);
+        input.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.isComposing)input.blur();if(e.key==='Escape')renderTable();});
+      }
+      function editDate(name, cell) {
+        var company=allData.find(function(c){return c.name===name;});
+        var input=document.createElement('input');
+        input.type='date'; input.value=company?(company.nouhinbi||''):'';
+        input.style.cssText='font-size:12px;border:1px solid #3498db;border-radius:4px;padding:2px;';
+        cell.textContent=''; cell.appendChild(input); input.focus();
+        input.showPicker&&input.showPicker();
+        function save(){if(company)company.nouhinbi=input.value||'';renderTable();saveData().catch(function(e){alert('保存失敗: '+e.message);});}
+        input.addEventListener('blur',save);
+        input.addEventListener('keydown',function(e){if(e.key==='Enter')input.blur();if(e.key==='Escape')renderTable();});
+      }
+      function addCompany() {
+        var name=document.getElementById('newCompanyName').value.trim();
+        if(!name){alert('事業者名を入力してください');return;}
+        if(allData.some(function(c){return c.name===name;})){alert('すでに存在します');return;}
+        var newC={name:name,tasks:{}};
+        var tantousha=document.getElementById('newTantousha').value.trim();
+        var hakkouMaisuu=document.getElementById('newHakkouMaisuu').value;
+        var designSuu=document.getElementById('newDesignSuu').value;
+        var nouhinbi=document.getElementById('newNouhinbi').value;
+        var mitsumori=document.getElementById('newMitsumoriKingaku').value;
+        var insatsu=document.getElementById('newInsatsuMitsumori').value;
+        var gokei=document.getElementById('newMitsumoriGokei').value;
+        var url=document.getElementById('newMitsumoriURL').value.trim();
+        var memo=document.getElementById('newMemo').value.trim();
+        var hatchuu=[];
+        document.querySelectorAll('input[name="newHatchuu"]:checked').forEach(function(cb){hatchuu.push(cb.value);});
+        if(tantousha!=='') newC.tantousha=tantousha;
+        if(hakkouMaisuu!=='') newC.hakkouMaisuu=Number(hakkouMaisuu);
+        if(designSuu!=='') newC.designSuu=Number(designSuu);
+        if(nouhinbi!=='') newC.nouhinbi=nouhinbi;
+        if(mitsumori!=='') newC.mitsumoriKingaku=Number(mitsumori);
+        if(insatsu!=='') newC.insatsuMitsumori=Number(insatsu);
+        if(gokei!=='') newC.mitsumoriGokei=Number(gokei);
+        if(url!=='') newC.mitsumoriURL=url;
+        if(memo!=='') newC.memo=memo;
+        if(hatchuu.length) newC.hatchuu=hatchuu;
+        TASKS.forEach(function(t){newC.tasks[t]='未着手';});
+        allData.push(newC);
+        render(); closeAddModal();
+        saveData().catch(function(e){alert('保存失敗: '+e.message);});
+      }
+      function updateTime() { document.getElementById('lastUpdated').textContent='最終更新: '+new Date().toLocaleTimeString('ja-JP'); }
+      function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+      function escAttr(s) { return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
+      document.getElementById('newCompanyName').addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.isComposing)addCompany();if(e.key==='Escape')closeAddModal();});
+      document.getElementById('tokenInput').addEventListener('keydown',function(e){if(e.key==='Enter')saveToken();});
+      init();
+    </script>
+    </body>
+    </html>
