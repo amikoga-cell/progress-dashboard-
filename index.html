@@ -376,6 +376,8 @@
       method: 'PATCH',
       headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json' },
       body: JSON.stringify({ files: { 'data.json': { content: JSON.stringify({ companies: allData, prospects: prospects }, null, 2) } } })
+    }).then(function(r) {
+      if (!r.ok) return r.json().then(function(j){ throw new Error(j.message || 'HTTP ' + r.status); });
     });
   }
   function isAllDone(c) { return TASKS.every(function(t) { return c.tasks[t] === '完了'; }); }
@@ -631,9 +633,10 @@
     input.style.cssText='font-size:12px;border:1px solid #3498db;border-radius:4px;padding:2px;';
     cell.textContent=''; cell.appendChild(input); input.focus();
     input.showPicker && input.showPicker();
-    function save() { if(p) p.appoDate=input.value||''; renderProspectTable(); saveData().catch(function(e){alert('保存失敗: '+e.message);}); }
+    var done=false;
+    function save() { if(done)return;done=true;if(p) p.appoDate=input.value||''; renderProspectTable(); saveData().catch(function(e){alert('保存失敗: '+e.message);}); }
     input.addEventListener('blur',save);
-    input.addEventListener('keydown',function(e){if(e.key==='Enter')input.blur();if(e.key==='Escape')renderProspectTable();});
+    input.addEventListener('keydown',function(e){if(e.key==='Enter')input.blur();if(e.key==='Escape'){done=true;renderProspectTable();}});
   }
   function editProspectText(name, field, cell) {
     var p = prospects.find(function(pr) { return pr.name===name; });
@@ -641,9 +644,10 @@
     input.type='text'; input.value=p?(p[field]||''):'';
     input.style.cssText='width:120px;font-size:12px;border:1px solid #3498db;border-radius:4px;padding:2px 4px;';
     cell.textContent=''; cell.appendChild(input); input.focus();
-    function save() { if(p) p[field]=input.value.trim(); renderProspectTable(); saveData().catch(function(e){alert('保存失敗: '+e.message);}); }
+    var done=false;
+    function save() { if(done)return;done=true;if(p) p[field]=input.value.trim(); renderProspectTable(); saveData().catch(function(e){alert('保存失敗: '+e.message);}); }
     input.addEventListener('blur',save);
-    input.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.isComposing)input.blur();if(e.key==='Escape')renderProspectTable();});
+    input.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.isComposing)input.blur();if(e.key==='Escape'){done=true;renderProspectTable();}});
   }
   function editProspectNumber(name, field, cell) {
     var p = prospects.find(function(pr) { return pr.name===name; });
@@ -651,9 +655,10 @@
     input.type='number'; input.value=p&&p[field]!==undefined?p[field]:'';
     input.style.cssText='width:100px;font-size:12px;text-align:center;border:1px solid #3498db;border-radius:4px;';
     cell.textContent=''; cell.appendChild(input); input.focus();
-    function save() { if(p){if(input.value!=='')p[field]=Number(input.value);else delete p[field];} renderProspectTable(); saveData().catch(function(e){alert('保存失敗: '+e.message);}); }
+    var done=false;
+    function save() { if(done)return;done=true;if(p){if(input.value!=='')p[field]=Number(input.value);else delete p[field];} renderProspectTable(); saveData().catch(function(e){alert('保存失敗: '+e.message);}); }
     input.addEventListener('blur',save);
-    input.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.isComposing)input.blur();if(e.key==='Escape')renderProspectTable();});
+    input.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.isComposing)input.blur();if(e.key==='Escape'){done=true;renderProspectTable();}});
   }
   function openJokyoModal(name) {
     jokyoTargetName=name;
@@ -699,9 +704,10 @@
     input.type='text'; input.value=company?(company[field]||''):'';
     input.style.cssText='width:100px;font-size:12px;border:1px solid #3498db;border-radius:4px;padding:2px 4px;';
     cell.textContent=''; cell.appendChild(input); input.focus();
-    function save(){if(company)company[field]=input.value.trim();renderTable();saveData().catch(function(e){alert('保存失敗: '+e.message);});}
+    var done=false;
+    function save(){if(done)return;done=true;if(company)company[field]=input.value.trim();renderTable();saveData().catch(function(e){alert('保存失敗: '+e.message);});}
     input.addEventListener('blur',save);
-    input.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.isComposing)input.blur();if(e.key==='Escape')renderTable();});
+    input.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.isComposing)input.blur();if(e.key==='Escape'){done=true;renderTable();}});
   }
   function toggleCard(header) { header.classList.toggle('open'); header.nextElementSibling.classList.toggle('open'); }
   function changeStatus(name, task, el) {
@@ -782,9 +788,10 @@
     input.type='number'; input.value=current;
     input.style.cssText='width:80px;font-size:12px;text-align:center;border:1px solid #3498db;border-radius:4px;';
     cell.textContent=''; cell.appendChild(input); input.focus();
-    function save(){var company=allData.find(function(c){return c.name===name;});if(company){if(input.value!=='')company[field]=Number(input.value);else delete company[field];}renderTable();renderStats();saveData().catch(function(e){alert('保存失敗: '+e.message);});}
+    var done=false;
+    function save(){if(done)return;done=true;var company=allData.find(function(c){return c.name===name;});if(company){if(input.value!=='')company[field]=Number(input.value);else delete company[field];}renderTable();renderStats();saveData().catch(function(e){alert('保存失敗: '+e.message);});}
     input.addEventListener('blur',save);
-    input.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.isComposing)input.blur();if(e.key==='Escape')renderTable();});
+    input.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.isComposing)input.blur();if(e.key==='Escape'){done=true;renderTable();}});
   }
   function editDate(name, field, cell) {
     var company=allData.find(function(c){return c.name===name;});
@@ -793,9 +800,10 @@
     input.style.cssText='font-size:12px;border:1px solid #3498db;border-radius:4px;padding:2px;';
     cell.textContent=''; cell.appendChild(input); input.focus();
     input.showPicker&&input.showPicker();
-    function save(){if(company)company[field]=input.value||'';renderTable();renderStats();saveData().catch(function(e){alert('保存失敗: '+e.message);});}
+    var done=false;
+    function save(){if(done)return;done=true;if(company)company[field]=input.value||'';renderTable();renderStats();saveData().catch(function(e){alert('保存失敗: '+e.message);});}
     input.addEventListener('blur',save);
-    input.addEventListener('keydown',function(e){if(e.key==='Enter')input.blur();if(e.key==='Escape')renderTable();});
+    input.addEventListener('keydown',function(e){if(e.key==='Enter')input.blur();if(e.key==='Escape'){done=true;renderTable();}});
   }
   function addCompany() {
     var name=document.getElementById('newCompanyName').value.trim();
