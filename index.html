@@ -57,9 +57,10 @@
     .item-cell { cursor: pointer; min-width: 80px; }
     .item-cell:hover { opacity: 0.7; }
     .item-empty { color: #ccc; }
-    .memo-cell { cursor: pointer; min-width: 180px; max-width: 180px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; color: #666; line-height: 1.4; text-align: left; }
-    .memo-cell:hover { color: #3498db; }
-    .memo-empty { color: #ccc; }
+    .memo-cell { cursor: pointer; min-width: 180px; max-width: 180px; text-align: left; }
+    .memo-cell:hover .memo-inner { color: #3498db; }
+    .memo-inner { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; color: #666; line-height: 1.4; }
+    .memo-empty .memo-inner { color: #ccc; }
     .url-cell { text-align: center; min-width: 80px; white-space: nowrap; }
     .url-link { color: #3498db; font-size: 11px; text-decoration: none; font-weight: bold; }
     .url-link:hover { text-decoration: underline; }
@@ -446,7 +447,7 @@
       }
       var hHtml = hatchuu.length ? hatchuu.map(function(h) { return '<span class="item-tag">'+esc(h)+'</span>'; }).join('') : '<span class="item-empty">＋選択</span>';
       body += '<tr class="'+(isAllDone(c)?'company-done':'')+'">';
-      body += '<td>'+esc(c.name)+' <button onclick="deleteCompany(\''+escAttr(c.name)+'\')" style="float:right;background:none;border:none;color:#ccc;cursor:pointer;font-size:16px;">\xD7</button></td>';
+      body += '<td>'+esc(c.name)+' <button onclick="deleteCompany(\''+escAttr(c.name)+'\')" style="float:right;background:none;border:none;color:#ccc;cursor:pointer;font-size:16px;">\xD7</button><button onclick="modoshiCompany(\''+escAttr(c.name)+'\')" style="float:right;background:none;border:none;color:#3498db;cursor:pointer;font-size:12px;margin-right:4px;" title="受注前に戻す">↩戻す</button></td>';
       body += '<td style="cursor:pointer" onclick="editCompanyText(\''+escAttr(c.name)+'\',\'tantousha\',this)">'+(c.tantousha?esc(c.tantousha):'<span class="item-empty">-</span>')+'</td>';
       body += '<td style="cursor:pointer" onclick="editDate(\''+escAttr(c.name)+'\',\'juchuDate\',this)">'+(c.juchuDate||'-')+'</td>';
       body += '<td style="cursor:pointer" onclick="editNumber(\''+escAttr(c.name)+'\',\'hakkouMaisuu\',this)">'+(c.hakkouMaisuu!==undefined?c.hakkouMaisuu.toLocaleString():'-')+'</td>';
@@ -458,7 +459,7 @@
       body += '<td style="cursor:pointer" onclick="editNumber(\''+escAttr(c.name)+'\',\'insatsuMitsumori\',this)">'+(c.insatsuMitsumori!==undefined?c.insatsuMitsumori.toLocaleString()+'円':'-')+'</td>';
       body += '<td class="url-cell">' + urlCellHtml(c.mitsumoriURL, 'company', c.name) + '</td>';
       body += '<td class="'+diffClass+'">'+(diff||'-')+'</td>';
-      body += '<td class="memo-cell'+(memo?'':' memo-empty')+'" onclick="openMemoModal(\''+escAttr(c.name)+'\')">'+(memo?esc(memo):'＋メモ')+'</td>';
+      body += '<td class="memo-cell'+(memo?'':' memo-empty')+'" onclick="openMemoModal(\''+escAttr(c.name)+'\')"><div class="memo-inner">'+(memo?esc(memo):'＋メモ')+'</div></td>';
       TASKS.forEach(function(t) {
         var s = c.tasks[t] || '未着手';
         body += '<td><select class="status-select status-'+s+'" onchange="changeStatus(\''+escAttr(c.name)+'\',\''+escAttr(t)+'\',this)">';
@@ -482,7 +483,7 @@
       }
       html += '<div class="company-card'+(isAllDone(c)?' card-done':'')+'"><div class="card-header" onclick="toggleCard(this)">';
       html += '<span class="company-name">'+esc(c.name)+'</span>';
-      html += '<div style="display:flex;align-items:center;gap:8px;"><button onclick="event.stopPropagation();deleteCompany(\''+escAttr(c.name)+'\')" class="card-delete">\xD7</button><span class="card-toggle">▼</span></div></div>';
+      html += '<div style="display:flex;align-items:center;gap:8px;"><button onclick="event.stopPropagation();modoshiCompany(\''+escAttr(c.name)+'\')" style="background:none;border:none;color:#aad4f5;cursor:pointer;font-size:12px;" title="受注前に戻す">↩戻す</button><button onclick="event.stopPropagation();deleteCompany(\''+escAttr(c.name)+'\')" class="card-delete">\xD7</button><span class="card-toggle">▼</span></div></div>';
       html += '<div class="card-body">';
       [['担当者',c.tantousha||'-'],['受注日',c.juchuDate||'-'],['発行枚数',c.hakkouMaisuu!==undefined?c.hakkouMaisuu.toLocaleString():'-'],
        ['デザイン数',c.designSuu!==undefined?c.designSuu:'-'],['発注内容',hatchuu.length?hatchuu.join('・'):'-'],
@@ -535,7 +536,7 @@
       body += '<td style="cursor:pointer" onclick="editProspectNumber(\''+escAttr(p.name)+'\',\'mitsumori\',this)">'+(p.mitsumori!==undefined?p.mitsumori.toLocaleString()+'円':'-')+'</td>';
       body += '<td class="url-cell">' + urlCellHtml(p.mitsumoriURL, 'prospect', p.name) + '</td>';
       body += '<td style="cursor:pointer" onclick="editProspectText(\''+escAttr(p.name)+'\',\'nextAction\',this)">'+(p.nextAction?esc(p.nextAction):'<span class="item-empty">＋アクション</span>')+'</td>';
-      body += '<td class="memo-cell'+(p.jokyo?'':' memo-empty')+'" onclick="openJokyoModal(\''+escAttr(p.name)+'\')">'+(p.jokyo?esc(p.jokyo):'＋備考')+'</td>';
+      body += '<td class="memo-cell'+(p.jokyo?'':' memo-empty')+'" onclick="openJokyoModal(\''+escAttr(p.name)+'\')"><div class="memo-inner">'+(p.jokyo?esc(p.jokyo):'＋備考')+'</div></td>';
       body += '<td style="white-space:nowrap"><button class="btn-juchu" onclick="juchuProspect(\''+escAttr(p.name)+'\')">受注</button> ';
       body += '<button onclick="deleteProspect(\''+escAttr(p.name)+'\')" style="background:none;border:none;color:#ccc;cursor:pointer;font-size:16px;">\xD7</button></td>';
       body += '</tr>';
@@ -752,6 +753,23 @@
     if(company){company.hatchuu=[];document.querySelectorAll('input[name="editHatchuu"]:checked').forEach(function(cb){company.hatchuu.push(cb.value);});}
     closeHatchuuModal(); render();
     saveData().catch(function(e){alert('保存失敗: '+e.message);}); updateTime();
+  }
+  function modoshiCompany(name) {
+    if (!confirm(name+' を受注前に戻しますか？')) return;
+    var c = allData.find(function(x){ return x.name===name; });
+    if (!c) return;
+    if (prospects.some(function(p){ return p.name===name; })) { alert(name+' はすでに受注前に存在します'); return; }
+    var p = { name:name, kakudo:'アプローチ中' };
+    if (c.tantousha) p.tantousha = c.tantousha;
+    if (c.mitsumoriKingaku!==undefined) p.mitsumori = c.mitsumoriKingaku;
+    if (c.mikomiGMV!==undefined) p.mikomiGMV = c.mikomiGMV;
+    if (c.mitsumoriURL) p.mitsumoriURL = c.mitsumoriURL;
+    if (c.memo) p.jokyo = c.memo;
+    prospects.push(p);
+    allData = allData.filter(function(x){ return x.name!==name; });
+    render(); switchTab('prospects');
+    saveData().catch(function(e){ alert('保存失敗: '+e.message); });
+    updateTime();
   }
   function deleteCompany(name) {
     if(!confirm(name+' を削除しますか？')) return;
