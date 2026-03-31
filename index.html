@@ -124,7 +124,10 @@
 
 <header>
   <h1>物理ギフトカード 進捗ダッシュボード</h1>
-  <div style="font-size:12px;opacity:0.7" id="lastUpdated"></div>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <div style="font-size:12px;opacity:0.7" id="lastUpdated"></div>
+    <button onclick="resetToken()" style="font-size:11px;padding:4px 10px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);border-radius:4px;color:white;cursor:pointer;">トークン変更</button>
+  </div>
 </header>
 
 <div class="tab-nav">
@@ -365,6 +368,7 @@
       updateTime();
     })
     .catch(function(e) {
+      if (e.message && e.message.includes('401')) { resetToken(); return; }
       if (!cached) {
         document.getElementById('loading').textContent = 'エラー: ' + e.message;
         document.getElementById('prospectLoading').textContent = 'エラー: ' + e.message;
@@ -377,6 +381,7 @@
       headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json' },
       body: JSON.stringify({ files: { 'data.json': { content: JSON.stringify({ companies: allData, prospects: prospects }, null, 2) } } })
     }).then(function(r) {
+      if (r.status === 401) { resetToken(); throw new Error('トークンが無効です。再入力してください。'); }
       if (!r.ok) return r.json().then(function(j){ throw new Error(j.message || 'HTTP ' + r.status); });
     });
   }
@@ -837,6 +842,11 @@
     allData.push(newC);
     render(); closeAddModal();
     saveData().catch(function(e){alert('保存失敗: '+e.message);});
+  }
+  function resetToken() {
+    localStorage.removeItem('gh_token'); token = '';
+    document.getElementById('tokenInput').value = '';
+    document.getElementById('tokenModal').classList.add('show');
   }
   function updateTime() { document.getElementById('lastUpdated').textContent='最終更新: '+new Date().toLocaleTimeString('ja-JP'); }
   function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
